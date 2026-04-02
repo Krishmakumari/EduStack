@@ -1,0 +1,177 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\courseservice\\domain\\entities\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|solutionrelative:courseservice\\domain\\entities\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\courseservice\\domain\\exceptions\\domainexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|solutionrelative:courseservice\\domain\\exceptions\\domainexception.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\courseservice\\domain\\enums\\coursestatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|solutionrelative:courseservice\\domain\\enums\\coursestatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\courseservice\\domain\\enums\\courselevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{980BF561-4C0B-48D9-8F41-D0374C73D3DE}|CourseService\\CourseService.csproj|solutionrelative:courseservice\\domain\\enums\\courselevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\authservice\\domain\\entities\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|solutionrelative:authservice\\domain\\entities\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\authservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|solutionrelative:authservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\authservice\\api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|solutionrelative:authservice\\api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\authservice\\infrastructure\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|solutionrelative:authservice\\infrastructure\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|d:\\dotnet\\sprintlms\\lmsbackend\\edustack\\authservice\\application\\interfaces\\iemailverificationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CDAB7B3-DE4F-6FF5-06F0-D824F083F1AF}|AuthService\\AuthService.csproj|solutionrelative:authservice\\application\\interfaces\\iemailverificationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IEmailVerificationRepository.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Application\\Interfaces\\IEmailVerificationRepository.cs",
+              "RelativeDocumentMoniker": "AuthService\\Application\\Interfaces\\IEmailVerificationRepository.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Application\\Interfaces\\IEmailVerificationRepository.cs",
+              "RelativeToolTip": "AuthService\\Application\\Interfaces\\IEmailVerificationRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T09:57:50.554Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Course.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Entities\\Course.cs",
+              "RelativeDocumentMoniker": "CourseService\\Domain\\Entities\\Course.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Entities\\Course.cs",
+              "RelativeToolTip": "CourseService\\Domain\\Entities\\Course.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAAgwC8AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T04:39:37.175Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DomainException.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Exceptions\\DomainException.cs",
+              "RelativeDocumentMoniker": "CourseService\\Domain\\Exceptions\\DomainException.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Exceptions\\DomainException.cs",
+              "RelativeToolTip": "CourseService\\Domain\\Exceptions\\DomainException.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T04:16:53.779Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CourseStatus.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Enums\\CourseStatus.cs",
+              "RelativeDocumentMoniker": "CourseService\\Domain\\Enums\\CourseStatus.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Enums\\CourseStatus.cs",
+              "RelativeToolTip": "CourseService\\Domain\\Enums\\CourseStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T04:15:56.598Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CourseLevel.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Enums\\CourseLevel.cs",
+              "RelativeDocumentMoniker": "CourseService\\Domain\\Enums\\CourseLevel.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\CourseService\\Domain\\Enums\\CourseLevel.cs",
+              "RelativeToolTip": "CourseService\\Domain\\Enums\\CourseLevel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-02T04:15:14.943Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RefreshToken.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Domain\\Entities\\RefreshToken.cs",
+              "RelativeDocumentMoniker": "AuthService\\Domain\\Entities\\RefreshToken.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Domain\\Entities\\RefreshToken.cs",
+              "RelativeToolTip": "AuthService\\Domain\\Entities\\RefreshToken.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-31T09:28:51.317Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Program.cs",
+              "RelativeDocumentMoniker": "AuthService\\Program.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Program.cs",
+              "RelativeToolTip": "AuthService\\Program.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAIBJwBsAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T09:37:18.173Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\API\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "AuthService\\API\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\API\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "AuthService\\API\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T09:36:03.756Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Infrastructure\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "AuthService\\Infrastructure\\Repositories\\UserRepository.cs",
+              "ToolTip": "D:\\Dotnet\\SprintLMS\\LMSbackend\\EduStack\\AuthService\\Infrastructure\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "AuthService\\Infrastructure\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T04:50:06.827Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

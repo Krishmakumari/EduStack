@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AuthService/AuthService.csproj" />
+  <Project Path="CourseService/CourseService.csproj" Id="980bf561-4c0b-48d9-8f41-d0374c73d3de" />
+</Solution>
