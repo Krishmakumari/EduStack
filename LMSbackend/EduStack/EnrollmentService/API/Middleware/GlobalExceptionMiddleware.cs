@@ -37,6 +37,7 @@ public class GlobalExceptionMiddleware
             EnrollmentNotFoundException => (HttpStatusCode.NotFound, ex.Message),
             AlreadyEnrolledException => (HttpStatusCode.Conflict, ex.Message),
             UnauthorizedEnrollmentAccessException => (HttpStatusCode.Forbidden, ex.Message),
+            UnauthorizedAccessException => (HttpStatusCode.Unauthorized, ex.Message),
             DomainException => (HttpStatusCode.BadRequest, ex.Message),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };

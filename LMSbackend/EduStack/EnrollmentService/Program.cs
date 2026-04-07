@@ -104,7 +104,9 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
-app.UseDeveloperExceptionPage();
+if (app.Environment.IsDevelopment())
+    app.UseDeveloperExceptionPage();
+
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseSwagger();

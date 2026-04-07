@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CourseService\CourseService.csproj" />
     <ProjectReference Include="..\EnrollmentService\EnrollmentService.csproj" />
+    <ProjectReference Include="..\PaymentService\PaymentService.csproj" />
   </ItemGroup>
 
 </Project>

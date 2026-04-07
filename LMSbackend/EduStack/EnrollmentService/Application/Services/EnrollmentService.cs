@@ -101,8 +101,9 @@ public class EnrollmentService : IEnrollmentService
         await _progressRepo.SaveChangesAsync();
 
         // Reload enrollment with updated progress
-        var updated = await _enrollmentRepo.GetByIdWithProgressAsync(enrollmentId)!;
-        return MapToProgressResponse(updated!);
+        var updated = await _enrollmentRepo.GetByIdWithProgressAsync(enrollmentId)
+            ?? throw new EnrollmentNotFoundException();
+        return MapToProgressResponse(updated);
     }
 
     // ─── Get Progress ─────────────────────────────────────────────────────────
