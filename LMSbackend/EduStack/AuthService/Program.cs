@@ -61,7 +61,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "EduLearn — Auth Service",
+        Title = "EduStack — Auth Service",
         Version = "v1"
     });
 
