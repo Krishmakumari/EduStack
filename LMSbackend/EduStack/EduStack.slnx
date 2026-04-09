@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="AuthService/AuthService.csproj" />
+  <Project Path="CertificateService/CertificateService.csproj" Id="21e61767-e64c-422d-b8b3-d7f97bd73d58" />
   <Project Path="CourseService/CourseService.csproj" Id="980bf561-4c0b-48d9-8f41-d0374c73d3de" />
   <Project Path="EnrollmentService/EnrollmentService.csproj" Id="0a8966f3-07f7-49c1-8de9-36850a7e9915" />
   <Project Path="LearningService/LearningService.csproj" Id="c1503e44-6f99-4513-9a18-320f959f91a7" />

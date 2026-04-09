@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CertificateService\CertificateService.csproj" />
     <ProjectReference Include="..\CourseService\CourseService.csproj" />
     <ProjectReference Include="..\EnrollmentService\EnrollmentService.csproj" />
     <ProjectReference Include="..\LearningService\LearningService.csproj" />
