@@ -27,6 +27,7 @@
     <ProjectReference Include="..\EnrollmentService\EnrollmentService.csproj" />
     <ProjectReference Include="..\LearningService\LearningService.csproj" />
     <ProjectReference Include="..\PaymentService\PaymentService.csproj" />
+    <ProjectReference Include="..\QuizService\QuizService.csproj" />
   </ItemGroup>
 
 </Project>
