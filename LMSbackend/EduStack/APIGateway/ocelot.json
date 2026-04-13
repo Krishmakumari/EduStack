@@ -1,0 +1,152 @@
+{
+  "Routes": [
+    {
+      "RouteId": "auth-service",
+      "SwaggerKey": "auth",
+      "UpstreamPathTemplate": "/gateway/auth/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5124 } ]
+    },
+    {
+      "RouteId": "courses-root",
+      "SwaggerKey": "courses",
+      "UpstreamPathTemplate": "/gateway/courses",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamPathTemplate": "/api/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
+    },
+    {
+      "RouteId": "courses-service",
+      "SwaggerKey": "courses",
+      "UpstreamPathTemplate": "/gateway/courses/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/courses/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
+    },
+    {
+      "RouteId": "enrollments-root",
+      "SwaggerKey": "enrollments",
+      "UpstreamPathTemplate": "/gateway/enrollments",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamPathTemplate": "/api/enrollments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5249 } ]
+    },
+    {
+      "RouteId": "enrollments-service",
+      "SwaggerKey": "enrollments",
+      "UpstreamPathTemplate": "/gateway/enrollments/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/enrollments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5249 } ]
+    },
+    {
+      "RouteId": "learning-service",
+      "SwaggerKey": "learning",
+      "UpstreamPathTemplate": "/gateway/learning/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/learning/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5240 } ]
+    },
+    {
+      "RouteId": "payments-root",
+      "SwaggerKey": "payments",
+      "UpstreamPathTemplate": "/gateway/payments",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamPathTemplate": "/api/payments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5117 } ]
+    },
+    {
+      "RouteId": "payments-service",
+      "SwaggerKey": "payments",
+      "UpstreamPathTemplate": "/gateway/payments/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/payments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5117 } ]
+    },
+    {
+      "RouteId": "admin-payments-service",
+      "SwaggerKey": "payments",
+      "UpstreamPathTemplate": "/gateway/admin/payments/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/admin/payments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5117 } ]
+    },
+    {
+      "RouteId": "quiz-root",
+      "SwaggerKey": "quiz",
+      "UpstreamPathTemplate": "/gateway/quiz",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamPathTemplate": "/api/quiz",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5021 } ]
+    },
+    {
+      "RouteId": "quiz-service",
+      "SwaggerKey": "quiz",
+      "UpstreamPathTemplate": "/gateway/quiz/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/quiz/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5021 } ]
+    },
+    {
+      "RouteId": "certificate-service",
+      "SwaggerKey": "certificates",
+      "UpstreamPathTemplate": "/gateway/certificates/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/certificates/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5022 } ]
+    },
+    {
+      "RouteId": "certificate-root",
+      "SwaggerKey": "certificates",
+      "UpstreamPathTemplate": "/gateway/certificates",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamPathTemplate": "/api/certificates",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5022 } ]
+    },
+    {
+      "RouteId": "notification-service",
+      "SwaggerKey": "notifications",
+      "UpstreamPathTemplate": "/gateway/notifications/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/notifications/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5244 } ]
+    },
+    {
+      "RouteId": "notification-root",
+      "SwaggerKey": "notifications",
+      "UpstreamPathTemplate": "/gateway/notifications",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "DownstreamPathTemplate": "/api/notifications",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5244 } ]
+    }
+  ],
+  "SwaggerEndPoints": [
+    { "Key": "auth", "Config": [ { "Name": "Auth API", "Version": "v1", "Url": "http://localhost:5124/swagger/v1/swagger.json" } ] },
+    { "Key": "courses", "Config": [ { "Name": "Course API", "Version": "v1", "Url": "http://localhost:5248/swagger/v1/swagger.json" } ] },
+    { "Key": "enrollments", "Config": [ { "Name": "Enrollment API", "Version": "v1", "Url": "http://localhost:5249/swagger/v1/swagger.json" } ] },
+    { "Key": "learning", "Config": [ { "Name": "Learning API", "Version": "v1", "Url": "http://localhost:5240/swagger/v1/swagger.json" } ] },
+    { "Key": "payments", "Config": [ { "Name": "Payment API", "Version": "v1", "Url": "http://localhost:5117/swagger/v1/swagger.json" } ] },
+    { "Key": "quiz", "Config": [ { "Name": "Quiz API", "Version": "v1", "Url": "http://localhost:5021/swagger/v1/swagger.json" } ] },
+    { "Key": "certificates", "Config": [ { "Name": "Certificate API", "Version": "v1", "Url": "http://localhost:5022/swagger/v1/swagger.json" } ] },
+    { "Key": "notifications", "Config": [ { "Name": "Notification API", "Version": "v1", "Url": "http://localhost:5244/swagger/v1/swagger.json" } ] }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5271"
+  }
+}

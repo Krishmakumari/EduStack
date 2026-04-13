@@ -1,9 +1,11 @@
 <Solution>
+  <Project Path="APIGateway/APIGateway.csproj" Id="4a530028-a391-48c5-bad2-388135966cdc" />
   <Project Path="AuthService/AuthService.csproj" />
   <Project Path="CertificateService/CertificateService.csproj" Id="21e61767-e64c-422d-b8b3-d7f97bd73d58" />
   <Project Path="CourseService/CourseService.csproj" Id="980bf561-4c0b-48d9-8f41-d0374c73d3de" />
   <Project Path="EnrollmentService/EnrollmentService.csproj" Id="0a8966f3-07f7-49c1-8de9-36850a7e9915" />
   <Project Path="LearningService/LearningService.csproj" Id="c1503e44-6f99-4513-9a18-320f959f91a7" />
+  <Project Path="NotificationService/NotificationService.csproj" Id="1e7b4054-bf39-42a9-88c4-f5da89384d4f" />
   <Project Path="PaymentService/PaymentService.csproj" Id="01fad24d-b6bf-4ed8-a036-9b5ad5e96257" />
   <Project Path="QuizService/QuizService.csproj" Id="4be3132e-8b0f-4fdb-b09a-b497dbcf9445" />
 </Solution>
