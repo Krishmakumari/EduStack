@@ -1,35 +1,49 @@
-﻿using CourseService.Domain.Enums;
+// Course Entity — Root of the Course → Section → Lesson hierarchy.
+// • Uses DDD: private setters + factory method (Course.Create) to enforce valid state.
+// • Created in Draft status by default; must have ≥1 section to publish.
+// • InstructorName is denormalized to avoid cross-service calls to Auth Service.
+
+using CourseService.Domain.Enums;
 using CourseService.Domain.Exceptions;
 
 namespace CourseService.Domain.Entities
 {
-    /// <summary>
-    /// Business Rules:
-    /// - A course is created in Draft status by default.
-    /// - A course cannot be published unless it contains at least one section.
-    /// - Updates modify course details and track the last updated timestamp.
-    /// - Status transitions (Draft, Published, Archived) are controlled through explicit methods.
-    ///
-    /// This entity encapsulates domain logic to ensure consistency and enforce invariants.
-    /// </summary>
     public class Course
     {
         public Guid CourseId { get; private set; }
-        public string Title { get;private set; } = default!; //Initialize this property with null, but suppress null warnings because I will assign a real value later.
+        public string Title { get;private set; } = default!;
         public string Description { get;private set; }
         public string ThumbnailUrl { get;private set; }
+
+        // Stored as decimal(18,2) in DB — supports prices like ₹499.99
         public decimal Price { get;private set; }
+
+        // Stored as string in DB via HasConversion<string>() — "Beginner" not 0
         public CourseLevel Level { get; private set; }
         public CourseStatus Status { get;private set; }
         public string Language { get;private set; } = default!;
+
+        // The instructor who created this course — used for ownership checks.
+        // This GUID comes from the JWT "sub" claim (same ID from Auth Service).
         public Guid InstructorId { get;private set; }
+
+        // Denormalized: copied from JWT at creation time to avoid calling Auth Service.
+        // If Auth Service is down, course catalog still shows instructor names.
         public string InstructorName { get;private set; } = default!;
+
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get;private set;  }
 
+        // Navigation: One Course → Many Sections (cascade delete configured in EF)
         public ICollection<Section> Sections { get; private set; } = new List<Section>();
 
+        // Private constructor forces creation through factory method below.
         private Course() { }
+
+        /// <summary>
+        /// Factory Method — creates a new course in Draft status.
+        /// InstructorId and InstructorName come from the JWT claims.
+        /// </summary>
         public static Course Create(string title,string description, string thumbnailUrl,
                                     decimal price,CourseLevel level,string language,
                                     Guid instructorId,string instructorName)
@@ -45,11 +59,12 @@ namespace CourseService.Domain.Entities
                 Language = language,
                 InstructorId = instructorId,
                 InstructorName = instructorName,
-                Status = CourseStatus.Draft,
+                Status = CourseStatus.Draft,    // always starts as Draft
                 CreatedAt = DateTime.UtcNow
             };
         }
 
+        // Updates mutable fields. UpdatedAt is set for audit trail.
         public void Update(string title, string description, string thumbnailUrl,
         decimal price, CourseLevel level, string language)
         {
@@ -62,6 +77,13 @@ namespace CourseService.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        // ─── Status Lifecycle ───────────────────────────────────────────────
+        // Draft ──(Publish)──► Published ──(Unpublish)──► Draft
+        //                                       └──(Archive)──► Archived
+
+        /// <summary>
+        /// Publishes the course. Enforces business rule: must have ≥1 section.
+        /// </summary>
         public void Publish()
         {
             if (!Sections.Any())
@@ -69,6 +91,7 @@ namespace CourseService.Domain.Entities
             Status = CourseStatus.Published;
             UpdatedAt = DateTime.UtcNow;
         }
+
         public void Unpublish()
         {
             Status = CourseStatus.Draft;
@@ -80,7 +103,5 @@ namespace CourseService.Domain.Entities
             Status = CourseStatus.Archived;
             UpdatedAt = DateTime.UtcNow;
         }
-
-
     }
 }

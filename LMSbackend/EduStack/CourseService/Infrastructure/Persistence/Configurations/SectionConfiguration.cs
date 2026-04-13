@@ -1,4 +1,7 @@
-﻿using CourseService.Domain.Entities;
+// SectionConfiguration — EF Fluent API table rules for the Sections table.
+// • Cascade delete: deleting a Section deletes all its Lessons.
+
+using CourseService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

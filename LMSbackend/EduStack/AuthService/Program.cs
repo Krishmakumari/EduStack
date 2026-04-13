@@ -1,3 +1,8 @@
+// Program.cs — Composition Root (startup) for the Auth Service.
+// • Wires all layers together: registers DI services + configures middleware pipeline.
+// • AddScoped = one instance per HTTP request (ideal for DB-related services).
+// • Pipeline order: ExceptionMiddleware → Swagger → CORS → Auth → Controllers.
+
 using System.Text;
 using AuthService.API.Middleware;
 using AuthService.Application.Interfaces;

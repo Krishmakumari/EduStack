@@ -1,4 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+// CourseDbContextFactory — Design-time factory for EF Core migrations CLI.
+// • Used by `dotnet ef migrations add` when the app isn't running (no DI container).
+// • Searches parent directories for appsettings.json to find the connection string.
+// • Falls back to environment variable if config file is missing.
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;

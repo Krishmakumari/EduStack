@@ -1,4 +1,9 @@
-﻿using AuthService.Application.DTOs.Requests;
+// IAuthService — Contract (interface) for all authentication operations.
+// • Dependency Inversion Principle: controller depends on this, not the concrete class.
+// • Enables mocking for unit tests and swapping implementations.
+// • All methods async because they involve database I/O.
+
+using AuthService.Application.DTOs.Requests;
 using AuthService.Application.DTOs.Responses;
 
 namespace AuthService.Application.Interfaces;

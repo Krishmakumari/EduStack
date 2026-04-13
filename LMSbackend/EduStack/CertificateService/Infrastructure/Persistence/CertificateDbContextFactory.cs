@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+// CertificateDbContextFactory — Design-time factory for EF Core migrations CLI.
+// • Used by `dotnet ef migrations add` when the app isn't running (no DI container).
+// • Reads connection string from appsettings.json in the current directory.
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
@@ -12,6 +16,7 @@ public class CertificateDbContextFactory
     {
         var optionsBuilder = new DbContextOptionsBuilder<CertificateDbContext>();
 
+        // Build configuration manually — no DI available during migration generation.
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")

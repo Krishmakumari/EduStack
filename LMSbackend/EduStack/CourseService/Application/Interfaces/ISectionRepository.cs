@@ -1,4 +1,7 @@
-﻿using CourseService.Domain.Entities;
+// ISectionRepository — Data access contract for Section entities.
+// • GetByIdAsync includes Lessons (eager load) for section detail responses.
+
+using CourseService.Domain.Entities;
 
 namespace CourseService.Application.Interfaces
 {

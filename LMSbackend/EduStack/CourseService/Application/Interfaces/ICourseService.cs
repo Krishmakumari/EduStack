@@ -1,4 +1,8 @@
-﻿using CourseService.Application.DTOs.Requests;
+// ICourseService — Contract for all course, section, and lesson operations.
+// • Dependency Inversion: controller depends on this interface, not the concrete class.
+// • InstructorId param on write methods enables ownership validation.
+
+using CourseService.Application.DTOs.Requests;
 using CourseService.Application.DTOs.Responses;
 
 namespace CourseService.Application.Interfaces;

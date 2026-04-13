@@ -1,4 +1,7 @@
-﻿using CourseService.Domain.Entities;
+// LessonConfiguration — EF Fluent API table rules for the Lessons table.
+// • VideoUrl max 2048 chars (URL length). Content max 10000 chars (text lessons).
+
+using CourseService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

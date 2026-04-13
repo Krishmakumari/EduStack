@@ -1,4 +1,7 @@
-﻿using CourseService.Application.Interfaces;
+// SectionRepository — EF Core implementation of ISectionRepository.
+// • GetByIdAsync eager-loads Lessons so responses include nested lesson data.
+
+using CourseService.Application.Interfaces;
 using CourseService.Domain.Entities;
 using CourseService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

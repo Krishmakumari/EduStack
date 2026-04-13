@@ -1,4 +1,8 @@
-﻿using CourseService.Domain.Entities;
+// CourseDbContext — EF Core gateway to the Course database.
+// • 3 tables: Courses, Sections, Lessons (database-per-service pattern).
+// • Auto-discovers Fluent API configs (CourseConfiguration, etc.) via reflection.
+
+using CourseService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 

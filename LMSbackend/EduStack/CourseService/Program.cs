@@ -1,3 +1,8 @@
+// Program.cs — Composition Root for the Course Service.
+// • Registers DI: CourseDbContext, repositories, CourseService.
+// • Validates JWT tokens issued by Auth Service (same Jwt:Key).
+// • Pipeline: ExceptionMiddleware → Swagger → CORS → Auth → Controllers.
+
 using System.Text;
 using CourseService.API.Middleware;
 using CourseService.Application.Interfaces;
@@ -12,18 +17,27 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // ─── Database ──────────────────────────────────────────────────────────────
+// Each microservice has its own database (database-per-service pattern).
+// CourseConnection is separate from Auth Service's DefaultConnection.
 builder.Services.AddDbContext<CourseDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CourseConnection")));
 
 // ─── Repositories ──────────────────────────────────────────────────────────
+// Scoped = one instance per HTTP request (matches DbContext lifetime).
+// Three repositories for the three entities: Course, Section, Lesson.
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 
 // ─── Services ──────────────────────────────────────────────────────────────
+// Single service handles all course/section/lesson business logic.
+// Fully qualified name needed because namespace and class share the name "CourseService".
 builder.Services.AddScoped<ICourseService, CourseService.Application.Services.CourseService>();
 
 // ─── JWT Authentication ────────────────────────────────────────────────────
+// This service does NOT issue tokens — Auth Service does.
+// It only VALIDATES tokens to know who the user is and what role they have.
+// IMPORTANT: Must use the SAME Jwt:Key as Auth Service (symmetric key trust).
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 
 builder.Services.AddAuthentication(options =>
@@ -37,13 +51,13 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
+        ValidateLifetime = true,       // reject expired tokens
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
                                        Encoding.UTF8.GetBytes(jwtKey)),
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero      // no grace period — expire exactly on time
     };
 });
 
@@ -105,18 +119,27 @@ builder.Logging.AddConsole();
 var app = builder.Build();
 // ══════════════════════════════════════════════════════════════════════════
 
+// MIDDLEWARE PIPELINE ORDER MATTERS:
+// 1. DeveloperExceptionPage — detailed errors in development.
+// 2. GlobalExceptionMiddleware — catches domain exceptions, returns clean JSON.
+// 3. Swagger — API documentation UI.
+// 4. CORS — allow cross-origin requests from frontend.
+// 5. Authentication — reads JWT from header, populates User claims.
+// 6. Authorization — checks [Authorize(Roles = ...)] attributes.
+// 7. MapControllers — routes requests to controller endpoints.
+
 app.UseDeveloperExceptionPage();
-app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();  // must be early to catch all errors
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "CourseService v1");
-    options.RoutePrefix = string.Empty;
+    options.RoutePrefix = string.Empty;   // Swagger UI at root URL
 });
 
 app.UseCors("AllowAll");
-app.UseAuthentication();
+app.UseAuthentication();   // must come BEFORE Authorization
 app.UseAuthorization();
 app.MapControllers();
 

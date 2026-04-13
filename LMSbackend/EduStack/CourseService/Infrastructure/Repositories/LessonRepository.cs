@@ -1,4 +1,7 @@
-﻿using CourseService.Application.Interfaces;
+// LessonRepository — EF Core implementation of ILessonRepository.
+// • Straightforward CRUD — no eager loading needed (Lesson is a leaf entity).
+
+using CourseService.Application.Interfaces;
 using CourseService.Domain.Entities;
 using CourseService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;

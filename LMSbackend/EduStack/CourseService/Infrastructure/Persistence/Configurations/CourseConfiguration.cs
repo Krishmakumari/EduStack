@@ -1,4 +1,9 @@
-﻿using CourseService.Domain.Entities;
+// CourseConfiguration — EF Fluent API table rules for the Courses table.
+// • Enums (Level, Status) stored as strings for DB readability.
+// • Price uses decimal(18,2) for currency precision.
+// • Cascade delete: deleting a Course deletes all its Sections (and their Lessons).
+
+using CourseService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
