@@ -1,7 +1,9 @@
-﻿namespace QuizService.Domain.Enums;
+// QuestionType Enum — Types of questions supported in the quiz engine.
+
+namespace QuizService.Domain.Enums;
 
 public enum QuestionType
 {
-    MCQ = 1,
-    TrueFalse = 2
+    MultipleChoice,
+    TrueFalse
 }

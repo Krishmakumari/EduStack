@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+// UserAnswerConfiguration — EF connection rules for UserAnswer entity.
+// • Limits `SelectedAnswer` size, optimizing for small text inputs.
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using QuizService.Domain.Entities;
 
@@ -8,9 +11,10 @@ public class UserAnswerConfiguration : IEntityTypeConfiguration<UserAnswer>
 {
     public void Configure(EntityTypeBuilder<UserAnswer> builder)
     {
-        builder.HasKey(a => a.Id);
+        builder.HasKey(ua => ua.AnswerId);
 
-        builder.Property(a => a.SelectedAnswer)
-            .IsRequired();
+        builder.Property(ua => ua.SelectedAnswer)
+            .IsRequired()
+            .HasMaxLength(500);
     }
 }

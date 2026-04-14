@@ -1,9 +1,10 @@
-﻿namespace QuizService.Domain.Exceptions;
+// QuizNotFoundException — Thrown when attempting to start/submit a quiz that doesn't exist.
+
+namespace QuizService.Domain.Exceptions;
 
 public class QuizNotFoundException : Exception
 {
-    public QuizNotFoundException(Guid quizId)
-        : base($"Quiz with ID {quizId} was not found.")
+    public QuizNotFoundException() : base("Quiz not found.")
     {
     }
 }

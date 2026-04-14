@@ -1,9 +1,9 @@
-﻿namespace QuizService.Application.DTOs;
+// Submit Quiz DTO — Input payload for finishing an attempt.
+
+namespace QuizService.Application.DTOs;
 
 public class SubmitQuizDto
 {
-    public Guid QuizId { get; set; }
-    public Guid UserId { get; set; }
-
-    public List<AnswerDto> Answers { get; set; }
+    // List of student responses mapped to question IDs.
+    public List<AnswerDto> Answers { get; set; } = new();
 }

@@ -2,7 +2,7 @@
 //->Represents a registered user (Student, Instructor, or Admin).       
 //   Every other service in the system identifies users by the UserId    
 //  that is generated here during registration.                         
-//                                                                           
+                                                                           
 //   WHY A PRIVATE CONSTRUCTOR + STATIC Create()?                              
 //   This is the Factory Method pattern. It guarantees every new User always    
 //   has a UUID, a lowercase email, and sensible defaults (not banned, not      

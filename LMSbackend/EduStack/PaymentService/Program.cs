@@ -1,3 +1,9 @@
+// Program.cs — Composition Root for the Payment Service.
+// • Registers: PaymentDbContext, repositories (Scoped), PaymentService (fully-qualified name).
+// • JWT validation using the same symmetric key as Auth Service.
+// • Swagger with Bearer token security definition for the Authorize button.
+// • Pipeline: ExceptionMiddleware → Swagger → Auth → Controllers (no CORS configured).
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,20 +16,25 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── DB ─────────────────────────────────────────────
+// ─── Database ──────────────────────────────────────────────────────────────
+// Database-per-service. Payment Service owns Payments + Refunds tables.
 builder.Services.AddDbContext<PaymentDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PaymentConnection")));
-Console.WriteLine(builder.Configuration.GetConnectionString("PaymentConnection"));
+Console.WriteLine(builder.Configuration.GetConnectionString("PaymentConnection")); // debug: verify connection string at startup
 
-// ─── DI ─────────────────────────────────────────────
+// ─── DI ───────────────────────────────────────────────────────────────────
+// Scoped = one instance per HTTP request (matches DbContext lifetime).
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IRefundRepository, RefundRepository>();
+
+// Fully qualified name required: namespace and class both called "PaymentService".
 builder.Services.AddScoped<IPaymentService, PaymentService.Application.Services.PaymentService>();
 
-// ─── Controllers ────────────────────────────────────
+// ─── Controllers ───────────────────────────────────────────────────────────
 builder.Services.AddControllers();
 
-// ─── Swagger ────────────────────────────────────────
+// ─── Swagger ───────────────────────────────────────────────────────────────
+// Bearer token security definition enables the "Authorize" button in Swagger UI.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -56,7 +67,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ─── JWT Authentication ─────────────────────────────
+// ─── JWT Authentication ────────────────────────────────────────────────────
+// Validates tokens issued by Auth Service using the SAME symmetric Jwt:Key.
+// Payment Service does NOT issue tokens — it only validates them.
 var jwt = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -67,30 +80,37 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidateLifetime = true,
+            ValidateLifetime = true,          // reject expired tokens
 
             ValidIssuer = jwt["Issuer"],
             ValidAudience = jwt["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwt["Key"]!))
+                Encoding.UTF8.GetBytes(jwt["Key"]!))  // same key as Auth Service
         };
     });
 
 builder.Services.AddAuthorization();
 
-// ─── App ────────────────────────────────────────────
+// ─── App Pipeline ──────────────────────────────────────────────────────────
+// ORDER MATTERS:
+// 1. ExceptionMiddleware — catches all errors before they reach auth/controllers
+// 2. Swagger — API documentation
+// 3. Authentication — validate JWT, populate User claims
+// 4. Authorization — enforce [Authorize] and [Authorize(Roles="...")] attributes
+// 5. MapControllers — route to endpoints
+
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();  // must be first to catch all errors
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "PaymentService v1");
-    options.RoutePrefix = string.Empty;
+    options.RoutePrefix = string.Empty;   // Swagger at root URL
 });
 
-app.UseAuthentication();
+app.UseAuthentication();   // must come before Authorization
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,4 +1,8 @@
-﻿namespace EnrollmentService.Application.DTOs.Responses;
+// EnrollmentDetailResponse — Full enrollment including all lesson progress records.
+// • Used by GetEnrollmentByIdAsync — the detail view (student clicks on a course).
+// • Extends EnrollmentResponse data with LessonProgresses list.
+
+namespace EnrollmentService.Application.DTOs.Responses;
 
 public class EnrollmentDetailResponse
 {
@@ -11,5 +15,8 @@ public class EnrollmentDetailResponse
     public string Status { get; set; } = default!;
     public DateTime EnrolledAt { get; set; }
     public DateTime? CompletedAt { get; set; }
+
+    // List of all lessons the student has interacted with — only completed ones present.
+    // Empty list = no lessons marked complete yet (lazy creation of progress records).
     public List<LessonProgressResponse> LessonProgresses { get; set; } = new();
 }
