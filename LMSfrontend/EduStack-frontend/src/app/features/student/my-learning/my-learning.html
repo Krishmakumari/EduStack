@@ -1,0 +1,45 @@
+<div class="learning-page">
+  <div class="learning-header">
+    <h1 class="learning-title">My <span class="highlight">Learning</span></h1>
+    <p class="learning-subtitle">Continue where you left off and master your skills.</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="learning-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading your courses...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="learning-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- Empty State -->
+  <div class="learning-empty" *ngIf="!loading && enrollments.length === 0 && !errorMessage">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </svg>
+    </div>
+    <p>You haven't enrolled in any courses yet.</p>
+    <a routerLink="/courses" class="btn-browse">Browse Courses</a>
+  </div>
+
+  <!-- Enrollment Grid -->
+  <div class="enrollment-grid" *ngIf="!loading && enrollments.length > 0">
+    <a class="enrollment-card" *ngFor="let enroll of enrollments" [routerLink]="['/student/learning', enroll.enrollmentId]">
+      <div class="card-header">
+        <span class="card-status" [ngClass]="getStatusClass(enroll.status)">{{ enroll.status }}</span>
+        <span class="card-date">Enrolled {{ enroll.enrolledAt | date:'mediumDate' }}</span>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">{{ enroll.courseTitle }}</h3>
+        <div class="card-footer">
+          <span class="btn-continue">
+            Continue Learning
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

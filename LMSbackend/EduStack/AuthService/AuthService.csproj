@@ -4,15 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>NU1902</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.67.0" />
-    <PackageReference Include="MailKit" Version="4.3.0" />
-    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
@@ -20,15 +17,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CertificateService\CertificateService.csproj" />
-    <ProjectReference Include="..\CourseService\CourseService.csproj" />
-    <ProjectReference Include="..\EnrollmentService\EnrollmentService.csproj" />
-    <ProjectReference Include="..\LearningService\LearningService.csproj" />
-    <ProjectReference Include="..\PaymentService\PaymentService.csproj" />
-    <ProjectReference Include="..\QuizService\QuizService.csproj" />
   </ItemGroup>
 
 </Project>

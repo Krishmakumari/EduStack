@@ -1,0 +1,101 @@
+:host {
+  display: block; min-height: 100vh; background: #020304;
+  font-family: 'Outfit', sans-serif; color: #fff;
+  --primary: #00E5B5; --card-bg: rgba(13,18,23,0.7);
+  --border: #2E3A45; --text-secondary: #9ca3af;
+  --input-bg: rgba(17,21,24,0.6);
+}
+
+.manage-page { max-width: 900px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+.back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; margin-bottom: 1.5rem; transition: color 0.2s; }
+.back-link:hover { color: var(--primary); }
+
+.manage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+.manage-title { font-size: 1.6rem; font-weight: 700; margin: 0; }
+.manage-sub { color: var(--text-secondary); font-size: 0.9rem; margin: 0.2rem 0 0; }
+
+.btn-add {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.6rem 1.1rem; border: none; border-radius: 8px;
+  background: var(--primary); color: #000; font-weight: 700;
+  font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -6px var(--primary); }
+
+/* Toast */
+.action-toast { background: rgba(0,229,181,0.1); border: 1px solid rgba(0,229,181,0.25); color: var(--primary); padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.85rem; text-align: center; margin-bottom: 1rem; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* States */
+.manage-loading, .manage-error { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; color: var(--text-secondary); gap: 1rem; }
+.manage-error a { color: var(--primary); text-decoration: none; }
+.spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.sections-empty { text-align: center; padding: 3rem 0; color: var(--text-secondary); }
+
+/* Inline Form */
+.inline-form { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+.inline-form h3, .inline-form h4 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.8rem; color: var(--primary); }
+.form-row-inline { display: flex; gap: 1rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; }
+.form-sm { max-width: 100px; }
+.form-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #d1d5db; }
+
+.inline-form input,
+.inline-form textarea,
+.inline-form select {
+  width: 100%; padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--input-bg); color: #fff;
+  font-family: inherit; font-size: 0.9rem;
+  transition: border-color 0.2s; box-sizing: border-box;
+}
+.inline-form input:focus, .inline-form textarea:focus { outline: none; border-color: var(--primary); }
+.inline-form textarea { resize: vertical; min-height: 60px; }
+.inline-form input::placeholder, .inline-form textarea::placeholder { color: #6b7280; }
+
+.checkbox-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; margin-bottom: 0.8rem; }
+.checkbox-row input[type=checkbox] { accent-color: var(--primary); width: 16px; height: 16px; }
+
+.form-actions { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
+.btn-save { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; background: var(--primary); color: #000; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.btn-save:hover { box-shadow: 0 4px 12px -4px var(--primary); }
+.btn-cancel { padding: 0.5rem 1.2rem; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.btn-cancel:hover { border-color: #fff; color: #fff; }
+
+/* Sections */
+.sections-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.section-block { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.section-bar { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.2rem; }
+.section-info { display: flex; align-items: center; gap: 0.6rem; }
+.section-num { width: 26px; height: 26px; border-radius: 6px; background: rgba(0,229,181,0.12); color: var(--primary); font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.section-name { font-weight: 600; font-size: 0.95rem; }
+.lesson-count { font-size: 0.75rem; color: var(--text-secondary); }
+
+.section-actions { display: flex; gap: 0.3rem; }
+.icon-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+.icon-delete:hover { border-color: #f87171; color: #f87171; }
+.icon-sm { width: 26px; height: 26px; }
+
+/* Lessons */
+.lessons-list { border-top: 1px solid var(--border); }
+.lesson-row { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1.2rem 0.6rem 2.6rem; }
+.lesson-row:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.04); }
+.lesson-row:hover { background: rgba(255,255,255,0.02); }
+.lesson-info { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+.lesson-type-icon { color: var(--text-secondary); flex-shrink: 0; }
+.lesson-name { font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.free-tag { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; padding: 0.1rem 0.4rem; border-radius: 3px; background: rgba(0,229,181,0.12); color: var(--primary); flex-shrink: 0; }
+.lesson-meta { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+.lesson-dur { font-size: 0.78rem; color: var(--text-secondary); }
+
+.lesson-form { margin: 0; border-radius: 0; border: none; border-top: 1px solid var(--border); }
+
+@media (max-width: 600px) {
+  .form-row-inline { flex-direction: column; }
+  .form-grid { grid-template-columns: 1fr; }
+  .manage-header { flex-direction: column; align-items: flex-start; }
+}

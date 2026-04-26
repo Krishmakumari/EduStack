@@ -1,0 +1,84 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #020304;
+  font-family: 'Outfit', sans-serif;
+  color: #ffffff;
+  --primary: #00E5B5;
+  --card-bg: rgba(13, 18, 23, 0.7);
+  --border: #2E3A45;
+  --text-secondary: #9ca3af;
+}
+
+.highlight { color: var(--primary); }
+
+/* Loading / Error */
+.detail-loading, .detail-error {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 60vh; color: var(--text-secondary); gap: 1rem;
+}
+.spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.back-link-error { color: var(--primary); text-decoration: none; }
+
+/* Hero */
+.detail-page { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+.back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; margin-bottom: 1.5rem; transition: color 0.2s; }
+.back-link:hover { color: var(--primary); }
+.hero-content { display: flex; gap: 2.5rem; align-items: flex-start; }
+.hero-info { flex: 1; }
+.hero-badges { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.3rem 0.7rem; border-radius: 6px; }
+.level-beginner { background: rgba(34,197,94,0.15); color: #4ade80; }
+.level-intermediate { background: rgba(234,179,8,0.15); color: #facc15; }
+.level-advanced { background: rgba(239,68,68,0.15); color: #f87171; }
+.badge-lang { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+.badge-status { background: rgba(234,179,8,0.15); color: #facc15; }
+.hero-title { font-size: 2rem; font-weight: 700; margin: 0 0 1rem; line-height: 1.25; letter-spacing: -0.5px; }
+.hero-desc { color: var(--text-secondary); font-size: 1rem; line-height: 1.65; margin: 0 0 1.5rem; }
+.hero-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.meta-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--text-secondary); }
+
+/* Price Card */
+.hero-sidebar { flex-shrink: 0; width: 280px; }
+.price-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; text-align: center; position: sticky; top: 2rem; }
+.price-tag { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 1.2rem; }
+.btn-enroll { width: 100%; padding: 0.9rem; border: none; border-radius: 10px; background: var(--primary); color: #000; font-family: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.25s; box-shadow: 0 8px 20px -8px var(--primary); }
+.btn-enroll:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--primary); }
+.price-features { margin-top: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); text-align: left; }
+
+/* Curriculum */
+.curriculum { margin-top: 3rem; }
+.section-heading { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.4rem; }
+.section-sub { color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 1.5rem; }
+.curriculum-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.curriculum-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.section-header { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; border: none; background: none; color: #fff; font-family: inherit; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; }
+.section-header:hover { background: rgba(255,255,255,0.03); }
+.section-left { display: flex; align-items: center; gap: 0.6rem; }
+.chevron { transition: transform 0.25s ease; color: var(--text-secondary); }
+.section-header.expanded .chevron { transform: rotate(90deg); }
+.section-order { color: var(--primary); font-weight: 700; }
+.section-title { font-weight: 600; }
+.section-count { font-size: 0.8rem; color: var(--text-secondary); }
+
+/* Lessons */
+.lesson-list { border-top: 1px solid var(--border); }
+.lesson-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.2rem 0.75rem 2.8rem; transition: background 0.15s; }
+.lesson-item:hover { background: rgba(255,255,255,0.02); }
+.lesson-item:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.04); }
+.lesson-left { display: flex; align-items: center; gap: 0.6rem; }
+.lesson-icon { color: var(--text-secondary); flex-shrink: 0; }
+.lesson-title { font-size: 0.9rem; }
+.free-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(0,229,181,0.12); color: var(--primary); }
+.lesson-duration { font-size: 0.8rem; color: var(--text-secondary); flex-shrink: 0; }
+
+.curriculum-empty { text-align: center; color: var(--text-secondary); padding: 2rem 0; }
+
+@media (max-width: 768px) {
+  .hero-content { flex-direction: column; }
+  .hero-sidebar { width: 100%; }
+  .price-card { position: static; }
+  .hero-title { font-size: 1.5rem; }
+}

@@ -1,0 +1,95 @@
+<div class="detail-page" *ngIf="!loading && course">
+  <!-- Hero Section -->
+  <div class="detail-hero">
+    <a routerLink="/courses" class="back-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All Courses
+    </a>
+    <div class="hero-content">
+      <div class="hero-info">
+        <div class="hero-badges">
+          <span class="badge level-{{ course.level.toLowerCase() }}">{{ course.level }}</span>
+          <span class="badge badge-lang">{{ course.language }}</span>
+          <span class="badge badge-status" *ngIf="course.status !== 'Published'">{{ course.status }}</span>
+        </div>
+        <h1 class="hero-title">{{ course.title }}</h1>
+        <p class="hero-desc">{{ course.description }}</p>
+        <div class="hero-meta">
+          <span class="meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            {{ course.instructorName }}
+          </span>
+          <span class="meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+            {{ totalLessons }} Lessons
+          </span>
+          <span class="meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+            {{ totalDuration }}
+          </span>
+        </div>
+      </div>
+      <div class="hero-sidebar">
+        <div class="price-card">
+          <div class="price-tag">{{ formatPrice(course.price) }}</div>
+          <button class="btn-enroll" (click)="enroll()" [disabled]="enrolling">
+            {{ enrolling ? 'Enrolling...' : 'Enroll Now' }}
+          </button>
+          <div class="price-features">
+            <span>✓ Full lifetime access</span>
+            <span>✓ {{ course.sections.length }} Sections</span>
+            <span>✓ {{ totalLessons }} Lessons</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Curriculum Section -->
+  <div class="curriculum">
+    <h2 class="section-heading">Course <span class="highlight">Curriculum</span></h2>
+    <p class="section-sub">{{ course.sections.length }} sections • {{ totalLessons }} lessons • {{ totalDuration }} total</p>
+
+    <div class="curriculum-list">
+      <div class="curriculum-section" *ngFor="let section of course.sections; let i = index">
+        <button class="section-header" (click)="toggleSection(section.sectionId)"
+          [class.expanded]="isSectionExpanded(section.sectionId)">
+          <div class="section-left">
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <span class="section-order">{{ i + 1 }}.</span>
+            <span class="section-title">{{ section.title }}</span>
+          </div>
+          <span class="section-count">{{ section.lessons.length }} lessons</span>
+        </button>
+        <div class="lesson-list" *ngIf="isSectionExpanded(section.sectionId)">
+          <div class="lesson-item" *ngFor="let lesson of section.lessons">
+            <div class="lesson-left">
+              <svg *ngIf="lesson.videoUrl" class="lesson-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <svg *ngIf="!lesson.videoUrl" class="lesson-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+              <span class="lesson-title">{{ lesson.title }}</span>
+              <span class="free-badge" *ngIf="lesson.isFreePreview">Free Preview</span>
+            </div>
+            <span class="lesson-duration">{{ formatDuration(lesson.durationInSeconds) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty Sections -->
+    <div class="curriculum-empty" *ngIf="course.sections.length === 0">
+      <p>No curriculum added yet.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="detail-loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading course...</p>
+</div>
+
+<!-- Error -->
+<div class="detail-error" *ngIf="errorMessage">
+  <p>{{ errorMessage }}</p>
+  <a routerLink="/courses" class="back-link-error">← Back to Courses</a>
+</div>

@@ -1,0 +1,136 @@
+<div class="manage-page" *ngIf="!loading && course">
+  <a routerLink="/instructor/my-courses" class="back-link">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    My Courses
+  </a>
+
+  <div class="manage-header">
+    <div>
+      <h1 class="manage-title">{{ course.title }}</h1>
+      <p class="manage-sub">Manage sections and lessons for this course.</p>
+    </div>
+    <button class="btn-add" (click)="openAddSection()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Add Section
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="action-toast" *ngIf="actionMessage">{{ actionMessage }}</div>
+
+  <!-- Section Form Modal -->
+  <div class="inline-form" *ngIf="showSectionForm">
+    <h3>{{ editSectionId ? 'Edit Section' : 'New Section' }}</h3>
+    <div class="form-row-inline">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input type="text" [(ngModel)]="sectionTitle" name="sectionTitle" placeholder="Section title" />
+      </div>
+      <div class="form-group form-sm">
+        <label class="form-label">Order</label>
+        <input type="number" [(ngModel)]="sectionOrder" name="sectionOrder" min="1" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-save" (click)="saveSection()">{{ editSectionId ? 'Update' : 'Add' }}</button>
+      <button class="btn-cancel" (click)="cancelSectionForm()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Sections List -->
+  <div class="sections-list">
+    <div class="section-block" *ngFor="let section of course.sections; let i = index">
+      <div class="section-bar">
+        <div class="section-info">
+          <span class="section-num">{{ i + 1 }}</span>
+          <span class="section-name">{{ section.title }}</span>
+          <span class="lesson-count">{{ section.lessons.length }} lessons</span>
+        </div>
+        <div class="section-actions">
+          <button class="icon-btn" (click)="openEditSection(section)" title="Edit Section">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="icon-btn" (click)="openAddLesson(section.sectionId, section.lessons.length)" title="Add Lesson">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <button class="icon-btn icon-delete" (click)="deleteSection(section.sectionId)" title="Delete Section">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lesson Form for this section -->
+      <div class="inline-form lesson-form" *ngIf="showLessonFormFor === section.sectionId">
+        <h4>{{ editLessonId ? 'Edit Lesson' : 'New Lesson' }}</h4>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" [(ngModel)]="lessonTitle" name="lessonTitle" placeholder="Lesson title" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Video URL</label>
+            <input type="url" [(ngModel)]="lessonVideoUrl" name="lessonVideoUrl" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duration (seconds)</label>
+            <input type="number" [(ngModel)]="lessonDuration" name="lessonDuration" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Order</label>
+            <input type="number" [(ngModel)]="lessonOrder" name="lessonOrder" min="1" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Content (Text / Markdown)</label>
+          <textarea [(ngModel)]="lessonContent" name="lessonContent" rows="3" placeholder="Optional text content..."></textarea>
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" [(ngModel)]="lessonFreePreview" name="lessonFreePreview" />
+          <span>Free Preview</span>
+        </label>
+        <div class="form-actions">
+          <button class="btn-save" (click)="saveLesson()">{{ editLessonId ? 'Update' : 'Add' }}</button>
+          <button class="btn-cancel" (click)="cancelLessonForm()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Lessons List -->
+      <div class="lessons-list" *ngIf="section.lessons.length > 0">
+        <div class="lesson-row" *ngFor="let lesson of section.lessons">
+          <div class="lesson-info">
+            <svg *ngIf="lesson.videoUrl" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="lesson-type-icon"><path d="M8 5v14l11-7z"/></svg>
+            <svg *ngIf="!lesson.videoUrl" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="lesson-type-icon"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            <span class="lesson-name">{{ lesson.title }}</span>
+            <span class="free-tag" *ngIf="lesson.isFreePreview">Free</span>
+          </div>
+          <div class="lesson-meta">
+            <span class="lesson-dur">{{ formatDuration(lesson.durationInSeconds) }}</span>
+            <button class="icon-btn icon-sm" (click)="openEditLesson(section.sectionId, lesson)" title="Edit">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn icon-sm icon-delete" (click)="deleteLesson(section.sectionId, lesson.lessonId)" title="Delete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <div class="sections-empty" *ngIf="course.sections.length === 0 && !showSectionForm">
+    <p>No sections yet. Click "Add Section" to start building your curriculum.</p>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="manage-loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading course...</p>
+</div>
+
+<!-- Error -->
+<div class="manage-error" *ngIf="errorMessage">
+  <p>{{ errorMessage }}</p>
+  <a routerLink="/instructor/my-courses">← Back to My Courses</a>
+</div>

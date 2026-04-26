@@ -1,0 +1,290 @@
+<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a routerLink="/" class="nav-logo">
+      <span class="logo-text"><span class="logo-edu">Edu</span><span class="logo-stack">Stack</span></span>
+    </a>
+    <div class="nav-links">
+      <a routerLink="/courses">Courses</a>
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#testimonials">Testimonials</a>
+    </div>
+    <!-- Logged OUT -->
+    <div class="nav-actions" *ngIf="!auth.isLoggedIn()">
+      <a routerLink="/auth/login" class="btn-ghost">Sign In</a>
+      <a routerLink="/auth/register" class="btn-primary-sm">Get Started</a>
+    </div>
+
+    <!-- Logged IN -->
+    <div class="nav-user" *ngIf="auth.isLoggedIn()">
+      <button class="user-trigger" (click)="toggleUserMenu()">
+        <span class="user-avatar">{{ userInitial }}</span>
+        <span class="user-name">Hi, {{ userName }}</span>
+        <svg class="user-chevron" [class.open]="showUserMenu" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="user-dropdown" *ngIf="showUserMenu">
+        <div class="dropdown-header">
+          <span class="dropdown-name">{{ userName }}</span>
+          <span class="dropdown-role">{{ userRole }}</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <a routerLink="/instructor/my-courses" class="dropdown-item" *ngIf="userRole === 'Instructor' || userRole === 'Admin'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          My Courses
+        </a>
+        <a routerLink="/student/my-learning" class="dropdown-item" *ngIf="userRole === 'Student'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c1.091 0 2.14.194 3.108.55a.75.75 0 0 0 .892-.733V6.042Z"/><path d="M12 6.042a8.967 8.967 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18c-1.091 0-2.14.194-3.108.55a.75.75 0 0 1-.892-.733V6.042Z"/></svg>
+          My Learning
+        </a>
+        <a routerLink="/courses" class="dropdown-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Browse Courses
+        </a>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item dropdown-logout" (click)="logout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+
+      <h1 class="hero-title">
+        Master new skills.<br />
+        <span class="highlight">Unlock your future.</span>
+      </h1>
+      <p class="hero-subtitle">
+        EduStack is the modern learning platform with structured courses, interactive quizzes,
+        progress tracking, and verified certificates — all in one place.
+      </p>
+      <div class="hero-cta">
+        <a routerLink="/auth/register" class="btn-primary-lg">
+          Start Learning Free
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+        <a routerLink="/courses" class="btn-outline-lg">
+          Browse Courses
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-avatars">
+          <div class="avatar" style="background:#00E5B5;">A</div>
+          <div class="avatar" style="background:#0EA5E9;">S</div>
+          <div class="avatar" style="background:#A855F7;">R</div>
+          <div class="avatar" style="background:#F59E0B;">K</div>
+        </div>
+        <span class="trust-text">Join <strong>500+</strong> learners already on EduStack</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="/hero_illustration.png" alt="Learning Workspace" class="hero-image" />
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FEATURES ═══════════════════════ -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">Features</span>
+      <h2 class="section-title">Everything you need to learn, teach, and grow</h2>
+      <p class="section-subtitle">Powered by 8 dedicated microservices working together seamlessly.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📚</div>
+        <h3>Structured Courses</h3>
+        <p>Courses organized into sections and lessons with multiple difficulty levels, languages, and pricing tiers.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Interactive Quizzes</h3>
+        <p>Test your knowledge with scored quizzes, multiple attempts, and intelligent pass/fail evaluation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Progress Tracking</h3>
+        <p>Track lesson-by-lesson progress and course completion with real-time status updates and streaks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Verified Certificates</h3>
+        <p>Earn and download PDF certificates upon course completion — verifiable proof of your achievement.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Secure Payments</h3>
+        <p>Purchase courses with UPI, cards, or net banking. Full refund support with complete transaction history.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Smart Notifications</h3>
+        <p>Stay updated with enrollment confirmations, quiz results, certificate issuance, and payment receipts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ HOW IT WORKS ═══════════════════════ -->
+<section class="how-it-works" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">How It Works</span>
+      <h2 class="section-title">From sign-up to certificate in 4 steps</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <h3>Create Account</h3>
+        <p>Sign up in seconds with your email. Secure JWT-based authentication keeps your data safe.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <h3>Browse & Enroll</h3>
+        <p>Explore courses by level and language. Enroll with one click — free or paid, your choice.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <h3>Learn & Take Quizzes</h3>
+        <p>Work through lessons at your own pace. Test your knowledge with interactive quizzes and track your progress.
+        </p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">04</div>
+        <h3>Get Certified</h3>
+        <p>Complete the course, download your verified PDF certificate, and showcase your skills anywhere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ STATS ═══════════════════════ -->
+<section class="stats" id="stats">
+  <div class="section-inner">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">8</div>
+        <div class="stat-label">Microservices</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">2,300+</div>
+        <div class="stat-label">Learners</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">150+</div>
+        <div class="stat-label">Courses</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ TESTIMONIALS ═══════════════════════ -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">Testimonials</span>
+      <h2 class="section-title">Loved by learners worldwide</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">"EduStack's structured approach and quizzes helped me actually retain what I
+          learned. The certificates are a great bonus for my portfolio!"</p>
+        <div class="testimonial-author">
+          <div class="avatar" style="background:#00E5B5;">A</div>
+          <div>
+            <div class="author-name">Arjun M.</div>
+            <div class="author-role">Full-Stack Developer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"I love how smooth everything is — from payment to enrollment to getting my
+          certificate. The progress tracking keeps me motivated."</p>
+        <div class="testimonial-author">
+          <div class="avatar" style="background:#A855F7;">S</div>
+          <div>
+            <div class="author-name">Sneha R.</div>
+            <div class="author-role">Data Science Student</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"As an instructor, the course management tools are powerful yet simple. Publishing
+          and managing sections, lessons, and quizzes is effortless."</p>
+        <div class="testimonial-author">
+          <div class="avatar" style="background:#0EA5E9;">K</div>
+          <div>
+            <div class="author-name">Karthik V.</div>
+            <div class="author-role">Course Instructor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CTA ═══════════════════════ -->
+<section class="cta-section">
+  <div class="section-inner">
+    <div class="cta-card">
+      <h2 class="cta-title">Ready to start your <span class="highlight">learning journey</span>?</h2>
+      <p class="cta-subtitle">Join thousands of learners building their future on EduStack. It's free to get started.
+      </p>
+      <a routerLink="/auth/register" class="btn-primary-lg">
+        Create Free Account
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo">
+        <span class="logo-text"><span class="logo-edu">Edu</span><span class="logo-stack">Stack</span></span>
+      </div>
+      <p class="footer-desc">The modern learning management system built with microservices architecture.</p>
+    </div>
+    <div class="footer-links-group">
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <a routerLink="/courses">Browse Courses</a>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a routerLink="/auth/login">Sign In</a>
+        <a routerLink="/auth/register">Create Account</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; {{ currentYear }} EduStack. All rights reserved.</span>
+  </div>
+</footer>
