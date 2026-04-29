@@ -10,17 +10,21 @@ using QuizService.Domain.Entities;
 using QuizService.Domain.Enums;
 using QuizService.Domain.Exceptions;
 using QuizService.Infrastructure.Persistence;
+using QuizService.Infrastructure.Messaging;
+using QuizService.Domain.Events;
 
 namespace QuizService.Application.Services;
 
 public class QuizService : IQuizService
 {
     private readonly QuizDbContext _context;
+    private readonly RabbitMqPublisher _publisher;
 
-    // Directly injects the DbContext.
-    public QuizService(QuizDbContext context)
+    // Directly injects the DbContext and Publisher.
+    public QuizService(QuizDbContext context, RabbitMqPublisher publisher)
     {
         _context = context;
+        _publisher = publisher;
     }
 
     // ─── Admin / Instructor Operations ────────────────────────────────────────
@@ -40,6 +44,17 @@ public class QuizService : IQuizService
         await _context.SaveChangesAsync();
 
         return quiz.QuizId;
+    }
+
+    public async Task UpdateQuizAsync(Guid quizId, UpdateQuizDto dto)
+    {
+        var quiz = await _context.Quizzes.FindAsync(quizId)
+            ?? throw new QuizNotFoundException();
+
+        quiz.Title = dto.Title;
+        quiz.PassingScore = dto.PassingScore;
+
+        await _context.SaveChangesAsync();
     }
 
     public async Task AddQuestionAsync(Guid quizId, CreateQuestionDto dto)
@@ -64,12 +79,44 @@ public class QuizService : IQuizService
         await _context.SaveChangesAsync();
     }
 
+    public async Task UpdateQuestionAsync(Guid questionId, UpdateQuestionDto dto)
+    {
+        var question = await _context.Questions.FindAsync(questionId)
+            ?? throw new QuestionNotFoundException(questionId);
+
+        if (!Enum.TryParse(dto.Type, true, out QuestionType type))
+            throw new ArgumentException("Invalid question type.");
+
+        question.Text = dto.Text;
+        question.Type = type;
+        question.CorrectAnswer = dto.CorrectAnswer;
+        question.Options = dto.Options;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteQuestionAsync(Guid questionId)
+    {
+        var question = await _context.Questions.FindAsync(questionId)
+            ?? throw new QuestionNotFoundException(questionId);
+
+        _context.Questions.Remove(question);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<Quiz> GetQuizDetailsAsync(Guid quizId)
     {
         return await _context.Quizzes
             .Include(q => q.Questions)
             .FirstOrDefaultAsync(q => q.QuizId == quizId)
             ?? throw new QuizNotFoundException();
+    }
+
+    public async Task<Quiz?> GetQuizByCourseIdAsync(Guid courseId)
+    {
+        return await _context.Quizzes
+            .Include(q => q.Questions)
+            .FirstOrDefaultAsync(q => q.CourseId == courseId);
     }
 
     // ─── Student Operations ──────────────────────────────────────────────────
@@ -98,7 +145,7 @@ public class QuizService : IQuizService
     }
 
     // Handles grading: calculates score, checks passing condition, saves history.
-    public async Task<QuizResultDto> SubmitQuizAsync(Guid attemptId, SubmitQuizDto dto, Guid studentId)
+    public async Task<QuizResultDto> SubmitQuizAsync(Guid attemptId, SubmitQuizDto dto, Guid studentId, string studentEmail)
     {
         // Must Include Questions to calculate score.
         var attempt = await _context.QuizAttempts
@@ -148,10 +195,18 @@ public class QuizService : IQuizService
             
         attempt.CompletedAt = DateTime.UtcNow;
 
+        Console.WriteLine($"[QuizService] Saving {dto.Answers.Count} answers for attempt {attemptId}...");
         await _context.SaveChangesAsync();
+        Console.WriteLine($"[QuizService] Submission completed for attempt {attemptId}.");
 
-        // 🔔 Event-Driven Notification trigger could be added here later:
-        // e.g. publish QuizResultEvent to RabbitMQ
+        // 🔥 Publish "QuizResultEvent" to RabbitMQ.
+        // NotificationService will pick this up and send an email.
+        await _publisher.PublishAsync("quiz_queue", new QuizResultEvent
+        {
+            UserId = studentId,
+            Email = studentEmail,
+            Passed = attempt.Status == AttemptStatus.Passed
+        });
 
         return new QuizResultDto
         {

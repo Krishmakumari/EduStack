@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { CourseService, CourseDetailResponse } from '../../../services/course.service';
 import { AuthService } from '../../../services/auth.service';
 import { EnrollmentService } from '../../../services/enrollment.service';
+import { Navbar } from '../../../core/navbar/navbar';
 
 @Component({
   selector: 'app-course-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Navbar],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
@@ -86,6 +87,13 @@ export class CourseDetail implements OnInit {
 
     if (!this.course) return;
 
+    // Paid courses → redirect to checkout page for payment flow
+    if (this.course.price > 0) {
+      this.router.navigate(['/student/checkout', this.course.courseId]);
+      return;
+    }
+
+    // Free courses → enroll directly
     this.enrolling = true;
     this.enrollmentService.enroll({
       courseId: this.course.courseId,

@@ -24,10 +24,20 @@ public class QuizController : ControllerBase
     }
 
     // Helper to extract student ID securely from JWT.
-    private Guid GetStudentId() =>
-        Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue("sub")
-            ?? throw new UnauthorizedAccessException("Student ID claim missing."));
+    private Guid GetStudentId()
+    {
+        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier) 
+                     ?? User.FindFirstValue("sub") 
+                     ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+        if (string.IsNullOrEmpty(idClaim))
+            throw new UnauthorizedAccessException("User ID claim missing in token.");
+
+        return Guid.Parse(idClaim);
+    }
+
+    private string GetStudentEmail()
+        => User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue("email") ?? "Unknown";
 
     // ─── Admin / Instructor Endpoints ────────────────────────────────────────
 
@@ -41,6 +51,16 @@ public class QuizController : ControllerBase
         return CreatedAtAction(nameof(GetQuiz), new { id = quizId }, new { QuizId = quizId });
     }
 
+    // PUT api/quizzes/{id}
+    // Updates basic quiz details (Title, PassingScore).
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,Instructor")]
+    public async Task<IActionResult> UpdateQuiz(Guid id, [FromBody] UpdateQuizDto dto)
+    {
+        await _quizService.UpdateQuizAsync(id, dto);
+        return Ok(new { message = "Quiz updated successfully." });
+    }
+
     // POST api/quizzes/{id}/questions
     // Appends a single question to an existing quiz.
     [HttpPost("{id}/questions")]
@@ -48,7 +68,25 @@ public class QuizController : ControllerBase
     public async Task<IActionResult> AddQuestion(Guid id, [FromBody] CreateQuestionDto dto)
     {
         await _quizService.AddQuestionAsync(id, dto);
-        return Ok("Question added successfully.");
+        return Ok(new { message = "Question added successfully." });
+    }
+
+    // PUT api/quizzes/questions/{questionId}
+    [HttpPut("questions/{questionId}")]
+    [Authorize(Roles = "Admin,Instructor")]
+    public async Task<IActionResult> UpdateQuestion(Guid questionId, [FromBody] UpdateQuestionDto dto)
+    {
+        await _quizService.UpdateQuestionAsync(questionId, dto);
+        return Ok(new { message = "Question updated successfully." });
+    }
+
+    // DELETE api/quizzes/questions/{questionId}
+    [HttpDelete("questions/{questionId}")]
+    [Authorize(Roles = "Admin,Instructor")]
+    public async Task<IActionResult> DeleteQuestion(Guid questionId)
+    {
+        await _quizService.DeleteQuestionAsync(questionId);
+        return Ok(new { message = "Question deleted successfully." });
     }
 
     // ─── Shared Endpoints ───────────────────────────────────────────────────
@@ -60,6 +98,16 @@ public class QuizController : ControllerBase
     public async Task<IActionResult> GetQuiz(Guid id)
     {
         var quiz = await _quizService.GetQuizDetailsAsync(id);
+        return Ok(quiz);
+    }
+
+    // GET api/quizzes/course/{courseId}
+    // Retrieves quiz for a specific course
+    [HttpGet("course/{courseId}")]
+    public async Task<IActionResult> GetQuizByCourse(Guid courseId)
+    {
+        var quiz = await _quizService.GetQuizByCourseIdAsync(courseId);
+        if (quiz == null) return NotFound("Quiz not found for this course.");
         return Ok(quiz);
     }
 
@@ -80,7 +128,7 @@ public class QuizController : ControllerBase
     [HttpPost("attempt/{attemptId}/submit")]
     public async Task<IActionResult> SubmitQuiz(Guid attemptId, [FromBody] SubmitQuizDto dto)
     {
-        var result = await _quizService.SubmitQuizAsync(attemptId, dto, GetStudentId());
+        var result = await _quizService.SubmitQuizAsync(attemptId, dto, GetStudentId(), GetStudentEmail());
         return Ok(result);
     }
 }

@@ -65,7 +65,7 @@ export interface ResetPasswordRequest {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   /** Gateway URL — Ocelot maps /gateway/auth/* → /api/auth/* on AuthService (port 5124) */
-  private baseUrl = 'http://127.0.0.1:5271/gateway/auth';
+  private baseUrl = 'http://localhost:5271/gateway/auth';
 
   public isBrowser: boolean;
 

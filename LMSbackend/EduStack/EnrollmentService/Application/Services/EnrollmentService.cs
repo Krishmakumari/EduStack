@@ -8,6 +8,8 @@ using EnrollmentService.Application.DTOs.Responses;
 using EnrollmentService.Application.Interfaces;
 using EnrollmentService.Domain.Entities;
 using EnrollmentService.Domain.Exceptions;
+using EnrollmentService.Infrastructure.Messaging;
+using EnrollmentService.Domain.Events;
 
 namespace EnrollmentService.Application.Services;
 
@@ -18,13 +20,16 @@ public class EnrollmentService : IEnrollmentService
     // but we must first verify the enrollment exists and belongs to the student.
     private readonly IEnrollmentRepository _enrollmentRepo;
     private readonly ILessonProgressRepository _progressRepo;
+    private readonly RabbitMqPublisher _publisher;
 
     public EnrollmentService(
         IEnrollmentRepository enrollmentRepo,
-        ILessonProgressRepository progressRepo)
+        ILessonProgressRepository progressRepo,
+        RabbitMqPublisher publisher)
     {
         _enrollmentRepo = enrollmentRepo;
         _progressRepo = progressRepo;
+        _publisher = publisher;
     }
 
     // ─── Enroll ───────────────────────────────────────────────────────────────
@@ -32,7 +37,7 @@ public class EnrollmentService : IEnrollmentService
     // CourseTitle is passed in the request (denormalized) to avoid calling Course Service.
     // DUPLICATE CHECK: Application-level guard (DB also has a unique index as a safety net).
     public async Task<EnrollmentResponse> EnrollAsync(
-        Guid studentId, string studentName, EnrollRequest request)
+        Guid studentId, string studentName, string studentEmail, EnrollRequest request)
     {
         // Step 1: Check if already enrolled in this course.
         // Uses composite lookup by studentId + courseId — unique enrollment only.
@@ -52,6 +57,15 @@ public class EnrollmentService : IEnrollmentService
 
         await _enrollmentRepo.AddAsync(enrollment);
         await _enrollmentRepo.SaveChangesAsync();
+
+        // Step 3: Publish "EnrollmentCompletedEvent" to RabbitMQ.
+        // NotificationService will pick this up and send an email.
+        await _publisher.PublishAsync("enrollment_queue", new EnrollmentCompletedEvent
+        {
+            UserId = studentId,
+            Email = studentEmail,
+            CourseTitle = request.CourseTitle
+        });
 
         return MapToEnrollmentResponse(enrollment);
     }
@@ -151,6 +165,12 @@ public class EnrollmentService : IEnrollmentService
             throw new UnauthorizedEnrollmentAccessException();
 
         return MapToProgressResponse(enrollment);
+    }
+
+    public async Task<bool> IsUserEnrolledAsync(Guid studentId, Guid courseId)
+    {
+        var enrollment = await _enrollmentRepo.GetByStudentAndCourseAsync(studentId, courseId);
+        return enrollment != null;
     }
 
     // ─── Mapping Helpers ──────────────────────────────────────────────────────

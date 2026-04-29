@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { EnrollmentService, EnrollmentResponse } from '../../../services/enrollment.service';
 import { AuthService } from '../../../services/auth.service';
+import { Navbar } from '../../../core/navbar/navbar';
 
 @Component({
   selector: 'app-my-learning',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Navbar],
   templateUrl: './my-learning.html',
   styleUrl: './my-learning.css',
 })

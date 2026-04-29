@@ -11,5 +11,6 @@ public class GenerateCertificateDto
     public Guid CourseId { get; set; }      // for which course
 
     public string UserName { get; set; }    // display name (printed on the PDF)
+    public string UserEmail { get; set; }   // where to send the notification
     public string CourseTitle { get; set; }  // course name (printed on the PDF)
 }

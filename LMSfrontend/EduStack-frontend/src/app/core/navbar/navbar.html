@@ -1,0 +1,63 @@
+<nav class="navbar">
+  <div class="nav-inner">
+    <a routerLink="/" class="nav-logo">
+      <span class="logo-text"><span class="logo-edu">Edu</span><span class="logo-stack">Stack</span></span>
+    </a>
+    
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/courses" routerLinkActive="active">Courses</a>
+      <a routerLink="/student/my-learning" routerLinkActive="active" *ngIf="userRole === 'Student'">My Learning</a>
+      <a routerLink="/instructor/my-courses" routerLinkActive="active" *ngIf="userRole === 'Instructor' || userRole === 'Admin'">My Courses</a>
+    </div>
+
+    <!-- Logged OUT -->
+    <div class="nav-actions" *ngIf="!auth.isLoggedIn()">
+      <a routerLink="/auth/login" class="btn-ghost">Sign In</a>
+      <a routerLink="/auth/register" class="btn-primary-sm">Get Started</a>
+    </div>
+
+    <!-- Logged IN -->
+    <div class="nav-user" *ngIf="auth.isLoggedIn()">
+      <button class="user-trigger" (click)="toggleUserMenu()">
+        <span class="user-avatar">{{ userInitial }}</span>
+        <span class="user-name">Hi, {{ userName }}</span>
+        <svg class="user-chevron" [class.open]="showUserMenu" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+
+      <div class="user-dropdown" *ngIf="showUserMenu">
+        <div class="dropdown-header">
+          <span class="dropdown-name">{{ userName }}</span>
+          <span class="dropdown-role">{{ userRole }}</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        
+        <a routerLink="/student/my-learning" class="dropdown-item" *ngIf="userRole === 'Student'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c1.091 0 2.14.194 3.108.55a.75.75 0 0 0 .892-.733V6.042Z"/><path d="M12 6.042a8.967 8.967 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18c-1.091 0-2.14.194-3.108.55a.75.75 0 0 1-.892-.733V6.042Z"/></svg>
+          My Learning
+        </a>
+
+        <a routerLink="/student/payments" class="dropdown-item" *ngIf="userRole === 'Student'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Payment History
+        </a>
+
+        <a routerLink="/instructor/my-courses" class="dropdown-item" *ngIf="userRole === 'Instructor' || userRole === 'Admin'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          My Courses
+        </a>
+
+        <a routerLink="/courses" class="dropdown-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Browse Courses
+        </a>
+
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item dropdown-logout" (click)="logout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

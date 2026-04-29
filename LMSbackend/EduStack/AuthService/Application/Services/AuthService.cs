@@ -9,6 +9,8 @@ using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Enums;
 using AuthService.Domain.Exceptions;
+using AuthService.Infrastructure.Messaging;
+using AuthService.Domain.Events;
 
 namespace AuthService.Application.Services;
 
@@ -18,6 +20,7 @@ public class AuthService : IAuthService
     private readonly IRefreshTokenRepository _refreshTokenRepo;
     private readonly IPasswordResetRepository _resetRepo;
     private readonly IJwtService _jwtService;
+    private readonly RabbitMqPublisher _publisher;
 
     // Constructor Dependency Injection — .NET DI container creates and
     // injects the correct implementations (registered in Program.cs).
@@ -25,12 +28,14 @@ public class AuthService : IAuthService
         IUserRepository userRepo,
         IRefreshTokenRepository refreshTokenRepo,
         IPasswordResetRepository resetRepo,
-        IJwtService jwtService)
+        IJwtService jwtService,
+        RabbitMqPublisher publisher)
     {
         _userRepo = userRepo;
         _refreshTokenRepo = refreshTokenRepo;
         _resetRepo = resetRepo;
         _jwtService = jwtService;
+        _publisher = publisher;
     }
 
     // ─── Register ────────────────────────────────────────────────────────────
@@ -180,9 +185,16 @@ public class AuthService : IAuthService
         await _resetRepo.AddAsync(reset);
         await _resetRepo.SaveChangesAsync();
 
-        // In development, OTP is returned directly for easy testing.
-        // In production: call IEmailService.SendPasswordResetOtpAsync() instead.
-        return new MessageResponse($"Your OTP is: {reset.OtpCode}. It expires in 15 minutes.");
+        // Step 3: Publish "OtpGeneratedEvent" to RabbitMQ.
+        // NotificationService will pick this up and send an email.
+        await _publisher.PublishAsync("otp_queue", new OtpGeneratedEvent
+        {
+            Email = request.Email,
+            OtpCode = reset.OtpCode
+        });
+
+        // Vague response to prevent enumeration attacks, but enough for local dev testing.
+        return new MessageResponse("If this email exists, an OTP has been sent to your email.");
     }
 
     // ─── Reset Password ───────────────────────────────────────────────────────

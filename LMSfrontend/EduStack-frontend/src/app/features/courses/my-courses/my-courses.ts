@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CourseService, CourseResponse } from '../../../services/course.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-my-courses',
@@ -18,11 +19,14 @@ export class MyCourses implements OnInit {
 
   constructor(
     private courseService: CourseService,
+    private auth: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.loadCourses();
+    if (this.auth.isBrowser) {
+      this.loadCourses();
+    }
   }
 
   loadCourses() {

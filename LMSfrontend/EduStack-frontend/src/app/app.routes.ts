@@ -36,6 +36,9 @@ export const routes: Routes = [
     children: [
       { path: 'my-learning', loadComponent: () => import('./features/student/my-learning/my-learning').then(m => m.MyLearning) },
       { path: 'learning/:enrollmentId', loadComponent: () => import('./features/student/course-player/course-player').then(m => m.CoursePlayer) },
+      { path: 'checkout/:courseId', loadComponent: () => import('./features/student/checkout/checkout').then(m => m.Checkout) },
+      { path: 'quiz/:courseId', loadComponent: () => import('./features/student/quiz-player/quiz-player').then(m => m.QuizPlayer) },
+      { path: 'payments', loadComponent: () => import('./features/student/payments/payments').then(m => m.Payments) },
     ]
   },
 ];

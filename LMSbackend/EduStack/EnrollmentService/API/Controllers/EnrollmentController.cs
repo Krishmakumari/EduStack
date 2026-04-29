@@ -42,6 +42,9 @@ public class EnrollmentController : ControllerBase
     private string GetStudentName()
         => User.FindFirstValue("fullName") ?? "Unknown";
 
+    private string GetStudentEmail()
+        => User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue("email") ?? "Unknown";
+
     // ─── Enrollment Endpoints ─────────────────────────────────────────────────
 
     // POST api/enrollments — Student only.
@@ -55,6 +58,7 @@ public class EnrollmentController : ControllerBase
         var result = await _enrollmentService.EnrollAsync(
             GetStudentId(),     // from JWT "sub" claim
             GetStudentName(),   // from JWT "fullName" claim
+            GetStudentEmail(),  // from JWT "email" claim
             request);
         return Ok(result);
     }
@@ -116,6 +120,17 @@ public class EnrollmentController : ControllerBase
     public async Task<IActionResult> GetProgress(Guid id)
     {
         var result = await _enrollmentService.GetProgressAsync(GetStudentId(), id);
+        return Ok(result);
+    }
+
+    // ─── Internal Cross-Service Endpoints ─────────────────────────────────────
+
+    // GET api/enrollments/check?userId=guid&courseId=guid
+    [HttpGet("check")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CheckEnrollment([FromQuery] Guid userId, [FromQuery] Guid courseId)
+    {
+        var result = await _enrollmentService.IsUserEnrolledAsync(userId, courseId);
         return Ok(result);
     }
 }

@@ -5,5 +5,6 @@ namespace QuizService.Domain.Enums;
 public enum QuestionType
 {
     MultipleChoice,
-    TrueFalse
+    TrueFalse,
+    ShortAnswer
 }

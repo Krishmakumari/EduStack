@@ -24,7 +24,11 @@ Console.WriteLine(builder.Configuration.GetConnectionString("QuizConnection")); 
 // Directly binding the Service (no IRepository interface used in this microservice).
 builder.Services.AddScoped<IQuizService, QuizService.Application.Services.QuizService>();
 
-// ─── JWT Authentication ───────────────────────────────────────────────────
+// RabbitMqPublisher — Event publishing logic.
+builder.Services.AddScoped<QuizService.Infrastructure.Messaging.RabbitMqPublisher>();
+
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -33,14 +37,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-
-            // 🔥 Shared secret with Auth Service
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("YourSuperSecretKey"))
+                Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero
         };
     });
 

@@ -83,19 +83,19 @@
     },
     {
       "RouteId": "quiz-root",
-      "SwaggerKey": "quiz",
-      "UpstreamPathTemplate": "/gateway/quiz",
+      "SwaggerKey": "quizzes",
+      "UpstreamPathTemplate": "/gateway/quizzes",
       "UpstreamHttpMethod": [ "GET", "POST" ],
-      "DownstreamPathTemplate": "/api/quiz",
+      "DownstreamPathTemplate": "/api/quizzes",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5021 } ]
     },
     {
       "RouteId": "quiz-service",
-      "SwaggerKey": "quiz",
-      "UpstreamPathTemplate": "/gateway/quiz/{everything}",
+      "SwaggerKey": "quizzes",
+      "UpstreamPathTemplate": "/gateway/quizzes/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/api/quiz/{everything}",
+      "DownstreamPathTemplate": "/api/quizzes/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5021 } ]
     },
@@ -142,7 +142,7 @@
     { "Key": "enrollments", "Config": [ { "Name": "Enrollment API", "Version": "v1", "Url": "http://localhost:5249/swagger/v1/swagger.json" } ] },
     { "Key": "learning", "Config": [ { "Name": "Learning API", "Version": "v1", "Url": "http://localhost:5240/swagger/v1/swagger.json" } ] },
     { "Key": "payments", "Config": [ { "Name": "Payment API", "Version": "v1", "Url": "http://localhost:5117/swagger/v1/swagger.json" } ] },
-    { "Key": "quiz", "Config": [ { "Name": "Quiz API", "Version": "v1", "Url": "http://localhost:5021/swagger/v1/swagger.json" } ] },
+    { "Key": "quizzes", "Config": [ { "Name": "Quiz API", "Version": "v1", "Url": "http://localhost:5021/swagger/v1/swagger.json" } ] },
     { "Key": "certificates", "Config": [ { "Name": "Certificate API", "Version": "v1", "Url": "http://localhost:5022/swagger/v1/swagger.json" } ] },
     { "Key": "notifications", "Config": [ { "Name": "Notification API", "Version": "v1", "Url": "http://localhost:5244/swagger/v1/swagger.json" } ] }
   ],

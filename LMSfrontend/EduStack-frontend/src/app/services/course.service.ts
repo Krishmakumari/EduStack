@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 // ─── Response Interfaces (match backend DTOs) ──────────────────────────────
 
@@ -107,9 +108,12 @@ export interface UpdateLessonRequest {
 @Injectable({ providedIn: 'root' })
 export class CourseService {
   /** Gateway URL — Ocelot maps /gateway/courses/* → /api/courses/* on CourseService (port 5248) */
-  private baseUrl = 'http://127.0.0.1:5271/gateway/courses';
+  private baseUrl = 'http://localhost:5271/gateway/courses';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   // ─── Course Read Endpoints (Public) ───────────────────────────────────────
 
@@ -216,7 +220,7 @@ export class CourseService {
   // ─── Auth Helper ──────────────────────────────────────────────────────────
 
   private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('accessToken');
+    const token = this.authService.getAccessToken();
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });

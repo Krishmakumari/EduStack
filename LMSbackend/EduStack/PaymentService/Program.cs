@@ -2,7 +2,7 @@
 // • Registers: PaymentDbContext, repositories (Scoped), PaymentService (fully-qualified name).
 // • JWT validation using the same symmetric key as Auth Service.
 // • Swagger with Bearer token security definition for the Authorize button.
-// • Pipeline: ExceptionMiddleware → Swagger → Auth → Controllers (no CORS configured).
+// • Pipeline: ExceptionMiddleware → CORS → Swagger → Auth → Controllers.
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Database-per-service. Payment Service owns Payments + Refunds tables.
 builder.Services.AddDbContext<PaymentDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PaymentConnection")));
-Console.WriteLine(builder.Configuration.GetConnectionString("PaymentConnection")); // debug: verify connection string at startup
 
 // ─── DI ───────────────────────────────────────────────────────────────────
 // Scoped = one instance per HTTP request (matches DbContext lifetime).
@@ -91,6 +90,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// ─── CORS ─────────────────────────────────────────────────────────────────
+// Allow Angular dev server and production origin to call this service.
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "http://127.0.0.1:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()));
+
 // ─── App Pipeline ──────────────────────────────────────────────────────────
 // ORDER MATTERS:
 // 1. ExceptionMiddleware — catches all errors before they reach auth/controllers
@@ -102,6 +111,8 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();  // must be first to catch all errors
+
+app.UseCors();  // must be before auth and controllers
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

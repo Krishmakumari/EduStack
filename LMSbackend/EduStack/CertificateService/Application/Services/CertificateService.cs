@@ -9,6 +9,8 @@ using CertificateService.Domain.Entities;
 using CertificateService.Domain.Exceptions;
 using CertificateService.Infrastructure.Persistence;
 using CertificateService.Infrastructure.Services;
+using CertificateService.Infrastructure.Messaging;
+using CertificateService.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace CertificateService.Application.Services;
@@ -21,13 +23,16 @@ public class CertificateService : ICertificateService
 
     // PdfGenerator handles the actual QuestPDF document creation.
     private readonly PdfGenerator _pdfGenerator;
+    private readonly RabbitMqPublisher _publisher;
 
     public CertificateService(
         CertificateDbContext context,
-        PdfGenerator pdfGenerator)
+        PdfGenerator pdfGenerator,
+        RabbitMqPublisher publisher)
     {
         _context = context;
         _pdfGenerator = pdfGenerator;
+        _publisher = publisher;
     }
 
     // ─── Generate Certificate ─────────────────────────────────────────────────
@@ -73,7 +78,16 @@ public class CertificateService : ICertificateService
         _context.Certificates.Add(certificate);
         await _context.SaveChangesAsync();
 
-        // Step 4: Return the certificate ID (client uses this to download later).
+        // Step 4: Publish "CertificateGeneratedEvent" to RabbitMQ.
+        // NotificationService will pick this up and send an email.
+        await _publisher.PublishAsync("certificate_queue", new CertificateGeneratedEvent
+        {
+            UserId = dto.UserId,
+            Email = dto.UserEmail,
+            CourseTitle = dto.CourseTitle
+        });
+
+        // Step 5: Return the certificate ID (client uses this to download later).
         return new CertificateResponseDto
         {
             CertificateId = certificate.CertificateId,

@@ -38,10 +38,13 @@ public class CourseRepository : ICourseRepository
 
     // Heavy — eager loads the full Course → Section → Lesson tree.
     // Used for detail view and publishing (needs Sections.Any() check).
+    // We use AsSplitQuery() to avoid cartesian explosion for deep hierarchies.
+    // OrderBy is removed from Include because it's handled in the Application Layer mapping.
     public async Task<Course?> GetByIdWithSectionsAsync(Guid courseId)
         => await _context.Courses
-            .Include(c => c.Sections.OrderBy(s => s.Order))          // load sections in order
-                .ThenInclude(s => s.Lessons.OrderBy(l => l.Order))   // load lessons in order
+            .Include(c => c.Sections)
+                .ThenInclude(s => s.Lessons)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(c => c.CourseId == courseId);
 
     public async Task AddAsync(Course course)

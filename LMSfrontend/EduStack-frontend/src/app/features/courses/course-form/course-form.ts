@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { timeout, retry } from 'rxjs/operators';
 import { CourseService, CreateCourseRequest } from '../../../services/course.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-course-form',
@@ -27,30 +29,42 @@ export class CourseForm implements OnInit {
 
   constructor(
     private courseService: CourseService,
+    private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id') || '';
     this.isEditMode = !!this.courseId;
 
-    if (this.isEditMode) {
-      this.courseService.getCourseById(this.courseId).subscribe({
-        next: (course) => {
-          this.title = course.title;
-          this.description = course.description;
-          this.thumbnailUrl = course.thumbnailUrl;
-          this.price = course.price;
-          this.level = course.level;
-          this.language = course.language;
-          this.pageLoading = false;
-        },
-        error: () => {
-          this.errorMessage = 'Failed to load course data.';
-          this.pageLoading = false;
-        },
-      });
+    if (this.isEditMode && this.auth.isBrowser) {
+      this.courseService.getCourseById(this.courseId)
+        .pipe(
+          timeout(15000),  // fail fast if backend is unreachable
+          retry(1)         // retry once on transient failure
+        )
+        .subscribe({
+          next: (course) => {
+            this.title = course.title;
+            this.description = course.description;
+            this.thumbnailUrl = course.thumbnailUrl;
+            this.price = course.price;
+            this.level = course.level;
+            this.language = course.language;
+            this.pageLoading = false;
+            this.cdr.detectChanges(); // force UI update
+          },
+          error: (err) => {
+            const isTimeout = err?.name === 'TimeoutError';
+            this.errorMessage = isTimeout
+              ? 'Request timed out. Please retry.'
+              : 'Failed to load course data.';
+            this.pageLoading = false;
+            this.cdr.detectChanges(); // force UI update
+          },
+        });
     } else {
       this.pageLoading = false;
     }

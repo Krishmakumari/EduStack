@@ -1,0 +1,105 @@
+<app-navbar></app-navbar>
+
+<div class="payments-page">
+  <div class="payments-header">
+    <div>
+      <h1 class="payments-title">Payment <span class="highlight">History</span></h1>
+      <p class="payments-sub">View all your course purchases and transactions.</p>
+    </div>
+    <a routerLink="/student/my-learning" class="btn-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      My Learning
+    </a>
+  </div>
+
+  <!-- Toast -->
+  <div class="action-toast" *ngIf="actionMessage">{{ actionMessage }}</div>
+
+  <!-- Loading -->
+  <div class="pay-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading payments...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="pay-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- Empty -->
+  <div class="pay-empty" *ngIf="!loading && payments.length === 0 && !errorMessage">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    <p>No payments found. Start by enrolling in a course!</p>
+    <a routerLink="/courses" class="btn-browse">Browse Courses</a>
+  </div>
+
+  <!-- Payment List -->
+  <div class="payment-list" *ngIf="!loading && payments.length > 0">
+    <div class="payment-card" *ngFor="let p of payments" [class.status-completed]="p.status === 'Completed'" [class.status-pending]="p.status === 'Pending'" [class.status-failed]="p.status === 'Failed'" [class.status-refunded]="p.status === 'Refunded'">
+      <div class="payment-main">
+        <div class="payment-course">
+          <span class="payment-course-title">{{ p.courseTitle }}</span>
+          <span class="payment-date">{{ formatDate(p.createdAt) }}</span>
+        </div>
+
+        <div class="payment-details">
+          <div class="detail-chip">
+            <span class="detail-label">Amount</span>
+            <span class="detail-value amount-value">{{ formatPrice(p.amount) }}</span>
+          </div>
+          <div class="detail-chip">
+            <span class="detail-label">Method</span>
+            <span class="detail-value">{{ p.method }}</span>
+          </div>
+          <div class="detail-chip">
+            <span class="detail-label">Status</span>
+            <span class="status-badge status-{{ p.status.toLowerCase() }}">{{ p.status }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extra info based on status -->
+      <div class="payment-extra" *ngIf="p.transactionId || p.failureReason || p.completedAt || p.refundedAt">
+        <span *ngIf="p.transactionId" class="extra-item">
+          <span class="extra-label">Txn ID:</span>
+          <span class="extra-mono">{{ p.transactionId }}</span>
+        </span>
+        <span *ngIf="p.completedAt" class="extra-item">
+          <span class="extra-label">Completed:</span> {{ formatDateTime(p.completedAt) }}
+        </span>
+        <span *ngIf="p.failureReason" class="extra-item extra-error">
+          <span class="extra-label">Reason:</span> {{ p.failureReason }}
+        </span>
+        <span *ngIf="p.refundedAt" class="extra-item">
+          <span class="extra-label">Refunded:</span> {{ formatDateTime(p.refundedAt) }}
+        </span>
+      </div>
+
+      <!-- Refund action (only for Completed payments) -->
+      <div class="payment-actions" *ngIf="p.status === 'Completed'">
+        <button class="btn-refund" (click)="openRefund(p.paymentId)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Request Refund
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REFUND MODAL ═══ -->
+<div class="modal-overlay" *ngIf="showRefundModal" (click)="cancelRefund()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <h3 class="modal-title">Request Refund</h3>
+    <p class="modal-desc">Please provide a reason for your refund request.</p>
+
+    <div class="modal-field">
+      <label class="modal-label">Reason</label>
+      <textarea [(ngModel)]="refundReason" name="refundReason" rows="3" placeholder="e.g. Course content not as described..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-refund-submit" (click)="submitRefund()" [disabled]="refundProcessing || !refundReason.trim()">
+        {{ refundProcessing ? 'Processing...' : 'Submit Refund' }}
+      </button>
+      <button class="btn-cancel" (click)="cancelRefund()">Cancel</button>
+    </div>
+  </div>
+</div>

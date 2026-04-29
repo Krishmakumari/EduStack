@@ -2,11 +2,12 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CourseService, CourseResponse } from '../../../services/course.service';
+import { Navbar } from '../../../core/navbar/navbar';
 
 @Component({
   selector: 'app-course-catalog',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Navbar],
   templateUrl: './course-catalog.html',
   styleUrl: './course-catalog.css',
 })

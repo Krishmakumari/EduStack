@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CertificateService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/certificates")]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class CertificateController : ControllerBase
 {
     private readonly ICertificateService _certificateService;

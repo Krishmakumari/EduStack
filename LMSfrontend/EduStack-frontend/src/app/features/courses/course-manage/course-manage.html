@@ -121,6 +121,122 @@
   <div class="sections-empty" *ngIf="course.sections.length === 0 && !showSectionForm">
     <p>No sections yet. Click "Add Section" to start building your curriculum.</p>
   </div>
+
+  <hr style="margin: 40px 0; border: none; border-top: 1px solid var(--border-color); opacity: 0.5;">
+
+  <!-- Quiz Management Section -->
+  <div class="manage-header" style="margin-top: 32px;">
+    <div>
+      <h2 class="manage-title" style="font-size: 1.5rem;">Course Quiz</h2>
+      <p class="manage-sub">Manage the quiz for this course.</p>
+    </div>
+    <button *ngIf="!quiz && !quizLoading" class="btn-add" (click)="openAddQuiz()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Create Quiz
+    </button>
+    <div style="display: flex; gap: 10px;">
+      <button *ngIf="quiz" class="btn-add" style="background: var(--surface-light); color: var(--text-primary); border: 1px solid var(--border-color);" (click)="openEditQuiz()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Quiz
+      </button>
+      <button *ngIf="quiz" class="btn-add" (click)="openAddQuestion()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Add Question
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz Loading -->
+  <div class="manage-loading" *ngIf="quizLoading">
+    <div class="spinner"></div>
+    <p>Loading quiz...</p>
+  </div>
+
+  <!-- Quiz Form Modal -->
+  <div class="inline-form" *ngIf="showQuizForm">
+    <h3>{{ editQuizId ? 'Edit Quiz' : 'New Quiz' }}</h3>
+    <div class="form-row-inline">
+      <div class="form-group">
+        <label class="form-label">Quiz Title</label>
+        <input type="text" [(ngModel)]="quizTitle" name="quizTitle" placeholder="Quiz Title" />
+      </div>
+      <div class="form-group form-sm">
+        <label class="form-label">Passing Score (%)</label>
+        <input type="number" [(ngModel)]="quizPassingScore" name="quizPassingScore" min="0" max="100" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-save" (click)="saveQuiz()">{{ editQuizId ? 'Update' : 'Create' }}</button>
+      <button class="btn-cancel" (click)="cancelQuizForm()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Question Form Modal -->
+  <div class="inline-form" *ngIf="showQuestionForm">
+    <h3>{{ editQuestionId ? 'Edit Question' : 'Add Question' }}</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Question Text</label>
+        <input type="text" [(ngModel)]="qText" name="qText" placeholder="What is the capital of France?" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Question Type</label>
+        <select [(ngModel)]="qType" name="qType" class="form-select">
+          <option value="MultipleChoice">Multiple Choice</option>
+          <option value="TrueFalse">True/False</option>
+          <option value="ShortAnswer">Short Answer</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Correct Answer</label>
+      <input type="text" [(ngModel)]="qCorrectAnswer" name="qCorrectAnswer" placeholder="Paris" />
+    </div>
+    <div class="form-group" *ngIf="qType === 'MultipleChoice'">
+      <label class="form-label">Options (comma separated)</label>
+      <input type="text" [(ngModel)]="qOptions" name="qOptions" placeholder="Paris, London, Berlin, Madrid" />
+    </div>
+    <div class="form-actions">
+      <button class="btn-save" (click)="saveQuestion()">{{ editQuestionId ? 'Update Question' : 'Add Question' }}</button>
+      <button class="btn-cancel" (click)="cancelQuestionForm()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Quiz Display -->
+  <div class="sections-list" *ngIf="quiz && !quizLoading">
+    <div class="section-block">
+      <div class="section-bar">
+        <div class="section-info">
+          <span class="section-name">{{ quiz.title }}</span>
+          <span class="lesson-count">Passing Score: {{ quiz.passingScore }}%</span>
+          <span class="lesson-count">{{ quiz.questions?.length || 0 }} questions</span>
+        </div>
+      </div>
+      
+      <div class="lessons-list" *ngIf="quiz.questions && quiz.questions.length > 0">
+        <div class="lesson-row" *ngFor="let q of quiz.questions; let i = index">
+          <div class="lesson-info" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+            <div style="font-weight: 500;">Q{{ i + 1 }}: {{ q.text }}</div>
+          </div>
+          <div class="lesson-meta" style="min-width: 150px;">
+            <span class="lesson-dur" *ngIf="q.type === 0">MCQ</span>
+            <span class="lesson-dur" *ngIf="q.type === 1">T/F</span>
+            <span class="lesson-dur" *ngIf="q.type === 2">Short</span>
+            <button class="icon-btn icon-sm" (click)="openEditQuestion(q)" title="Edit">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn icon-sm icon-delete" (click)="deleteQuestion(q.questionId)" title="Delete">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="sections-empty" *ngIf="!quiz.questions || quiz.questions.length === 0" style="padding: 24px;">
+        <p>No questions added to this quiz yet.</p>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Loading -->
@@ -132,5 +248,10 @@
 <!-- Error -->
 <div class="manage-error" *ngIf="errorMessage">
   <p>{{ errorMessage }}</p>
-  <a routerLink="/instructor/my-courses">← Back to My Courses</a>
+  <div style="display: flex; gap: 12px; margin-top: 12px;">
+    <button class="btn-add" (click)="loadCourse()" style="font-size: 0.85rem; padding: 8px 16px;">
+      ↺ Retry
+    </button>
+    <a routerLink="/instructor/my-courses">← Back to My Courses</a>
+  </div>
 </div>

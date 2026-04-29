@@ -1,10 +1,8 @@
+<app-navbar></app-navbar>
 <div class="detail-page" *ngIf="!loading && course">
   <!-- Hero Section -->
   <div class="detail-hero">
-    <a routerLink="/courses" class="back-link">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      All Courses
-    </a>
+  <div class="detail-hero">
     <div class="hero-content">
       <div class="hero-info">
         <div class="hero-badges">
@@ -33,7 +31,7 @@
         <div class="price-card">
           <div class="price-tag">{{ formatPrice(course.price) }}</div>
           <button class="btn-enroll" (click)="enroll()" [disabled]="enrolling">
-            {{ enrolling ? 'Enrolling...' : 'Enroll Now' }}
+            {{ enrolling ? 'Enrolling...' : (course.price > 0 ? 'Buy Now' : 'Enroll Free') }}
           </button>
           <div class="price-features">
             <span>✓ Full lifetime access</span>

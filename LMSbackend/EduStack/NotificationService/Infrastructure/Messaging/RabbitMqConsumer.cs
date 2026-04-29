@@ -42,6 +42,7 @@ public class RabbitMqConsumer : IHostedService
         await DeclareAndConsumeAsync("certificate_queue", HandleCertificateAsync);
         await DeclareAndConsumeAsync("enrollment_queue", HandleEnrollmentAsync);
         await DeclareAndConsumeAsync("quiz_queue", HandleQuizAsync);
+        await DeclareAndConsumeAsync("otp_queue", HandleOtpAsync);
     }
 
     // DeclareAndConsumeAsync — reusable factory to set up a queue + consumer.
@@ -105,6 +106,17 @@ public class RabbitMqConsumer : IHostedService
             evt.Email,
             "Quiz Result",
             $"Your quiz result is in — you {result}.");
+    }
+
+    // HandleOtpAsync — triggered when a password reset OTP is generated.
+    private async Task HandleOtpAsync(string json)
+    {
+        var evt = JsonSerializer.Deserialize<OtpGeneratedEvent>(json);
+        if (evt is null) return;
+        await _emailService.SendEmailAsync(
+            evt.Email,
+            "Password Reset OTP 🔐",
+            $"Your password reset OTP is: {evt.OtpCode}. It expires in 15 minutes.");
     }
 
     // StopAsync — called automatically when the application shuts down.

@@ -1,0 +1,129 @@
+<div class="player-container">
+  <!-- Top Bar -->
+  <div class="player-top">
+    <div class="top-left">
+      <a routerLink="/student/my-learning" class="back-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <h2 class="course-title">Course Assessment</h2>
+    </div>
+  </div>
+
+  <div class="player-main">
+    <div class="content-area">
+      
+      <!-- Loading State -->
+      <div class="state-container" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Loading assessment details...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="state-container error" *ngIf="errorMessage && !loading">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        <p>{{ errorMessage }}</p>
+        <a routerLink="/student/my-learning" class="btn-primary mt-4">Return to Dashboard</a>
+      </div>
+
+      <!-- Quiz Intro -->
+      <div class="quiz-intro glass-panel" *ngIf="!loading && !errorMessage && quiz && !quizStarted && !result">
+        <h1 class="quiz-title">{{ quiz.title }}</h1>
+        <div class="quiz-meta">
+          <div class="meta-item">
+            <span class="meta-label">Questions</span>
+            <span class="meta-value">{{ quiz.questions.length }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Passing Score</span>
+            <span class="meta-value">{{ quiz.passingScore }}%</span>
+          </div>
+        </div>
+        <div class="action-section">
+          <button class="btn-primary large" (click)="startQuiz()">
+            Start Assessment
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Quiz -->
+      <div class="quiz-active" *ngIf="quizStarted && !result">
+        <h2 class="quiz-title mb-6">{{ quiz?.title }}</h2>
+        
+        <div class="question-list">
+          <div class="question-card glass-panel" *ngFor="let question of quiz?.questions; let i = index">
+            <h3 class="question-text"><span class="q-number">{{ i + 1 }}.</span> {{ question.text }}</h3>
+            
+            <div class="options-container">
+              <!-- Multiple Choice / True False -->
+              <ng-container *ngIf="getOptions(question).length > 0">
+                <label class="option-label" *ngFor="let opt of getOptions(question)">
+                  <input type="radio" 
+                         [name]="'q_' + question.questionId" 
+                         [value]="opt" 
+                         [(ngModel)]="answers[question.questionId]">
+                  <span class="radio-custom"></span>
+                  <span class="option-text">{{ opt }}</span>
+                </label>
+              </ng-container>
+
+              <!-- Text Input if no options -->
+              <ng-container *ngIf="getOptions(question).length === 0">
+                <input type="text" class="input-field" 
+                       [(ngModel)]="answers[question.questionId]"
+                       placeholder="Enter your answer...">
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="submit-section">
+          <button class="btn-primary large" [disabled]="submitting" (click)="submitQuiz()">
+            {{ submitting ? 'Submitting...' : 'Submit Assessment' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Result Screen -->
+      <div class="quiz-result glass-panel" *ngIf="result">
+        <div class="result-header" [class.passed]="result.passed" [class.failed]="!result.passed">
+          <div class="icon-circle">
+            <svg *ngIf="result.passed" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"/></svg>
+            <svg *ngIf="!result.passed" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+          </div>
+          <h1 class="result-title">{{ result.passed ? 'Congratulations!' : 'Keep Learning!' }}</h1>
+          <p class="result-subtitle">{{ result.passed ? 'You passed the assessment.' : 'You did not meet the passing score.' }}</p>
+        </div>
+
+        <div class="score-cards">
+          <div class="score-card">
+            <span class="score-label">Your Score</span>
+            <span class="score-value" [class.text-success]="result.passed" [class.text-danger]="!result.passed">
+              {{ result.score | number:'1.0-0' }}%
+            </span>
+          </div>
+          <div class="score-card">
+            <span class="score-label">Correct Answers</span>
+            <span class="score-value">{{ result.correctAnswers }} / {{ result.totalQuestions }}</span>
+          </div>
+          <div class="score-card">
+            <span class="score-label">Required Score</span>
+            <span class="score-value">{{ quiz?.passingScore }}%</span>
+          </div>
+        </div>
+
+        <div class="action-section mt-8 text-center" style="display: flex; gap: 1rem; justify-content: center;">
+          <button *ngIf="result.passed" 
+                  class="btn-primary" 
+                  [disabled]="generatingCertificate"
+                  (click)="generateCertificate()">
+            {{ generatingCertificate ? 'Generating...' : 'Claim Your Certificate' }}
+          </button>
+          <a routerLink="/student/my-learning" class="btn-primary" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+            Return to Dashboard
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

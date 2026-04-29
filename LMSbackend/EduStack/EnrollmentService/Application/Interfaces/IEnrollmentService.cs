@@ -11,7 +11,7 @@ namespace EnrollmentService.Application.Interfaces;
 public interface IEnrollmentService
 {
     // Enroll a student — checks for duplicates, creates enrollment in Active status.
-    Task<EnrollmentResponse> EnrollAsync(Guid studentId, string studentName, EnrollRequest request);
+    Task<EnrollmentResponse> EnrollAsync(Guid studentId, string studentName, string studentEmail, EnrollRequest request);
 
     // List all enrollments for the JWT student (lightweight response).
     Task<IEnumerable<EnrollmentResponse>> GetMyEnrollmentsAsync(Guid studentId);
@@ -27,4 +27,7 @@ public interface IEnrollmentService
 
     // Get progress stats: total, completed, percentage — validates ownership.
     Task<ProgressResponse> GetProgressAsync(Guid studentId, Guid enrollmentId);
+
+    // Cross-service helper: checks if a user is enrolled in a course.
+    Task<bool> IsUserEnrolledAsync(Guid studentId, Guid courseId);
 }

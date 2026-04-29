@@ -32,6 +32,9 @@ builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthSe
 builder.Services.AddScoped<IJwtService, JwtService>();
 //builder.Services.AddScoped<IEmailService, EmailService>();
 
+// RabbitMqPublisher — Event publishing logic.
+builder.Services.AddScoped<AuthService.Infrastructure.Messaging.RabbitMqPublisher>();
+
 // ─── JWT Authentication ────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 

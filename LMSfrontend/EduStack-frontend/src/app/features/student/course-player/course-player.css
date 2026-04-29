@@ -140,6 +140,8 @@
   transition: background 0.15s;
 }
 
+.mt-4 { margin-top: 1rem; }
+
 .lesson-btn:hover { background: rgba(255,255,255,0.05); }
 .lesson-btn.active { background: rgba(0, 229, 181, 0.1); color: #00E5B5; }
 

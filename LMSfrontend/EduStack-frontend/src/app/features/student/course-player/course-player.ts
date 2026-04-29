@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EnrollmentService, EnrollmentDetailResponse, ProgressResponse } from '../../../services/enrollment.service';
 import { CourseService, CourseDetailResponse, LessonResponse } from '../../../services/course.service';
-import { forkJoin } from 'rxjs';
+import { LearningService, LessonProgressResponse } from '../../../services/learning.service';
+import { forkJoin, interval, Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -22,11 +23,15 @@ export class CoursePlayer implements OnInit {
   loading = true;
   completing = false;
   errorMessage = '';
+  
+  private progressSub: Subscription | null = null;
+  currentWatchedSeconds = 0;
 
   constructor(
     private route: ActivatedRoute,
     private enrollmentService: EnrollmentService,
     private courseService: CourseService,
+    private learningService: LearningService,
     private auth: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -75,22 +80,89 @@ export class CoursePlayer implements OnInit {
     if (!this.course || !this.course.sections.length) return;
     
     // Find first incomplete lesson
+    let lessonToSet: LessonResponse | null = null;
     for (const section of this.course.sections) {
-      for (const lesson of section.lessons) {
-        if (!this.isLessonCompleted(lesson.lessonId)) {
-          this.activeLesson = lesson;
-          return;
+      if (section.lessons && section.lessons.length > 0) {
+        for (const lesson of section.lessons) {
+          if (!this.isLessonCompleted(lesson.lessonId)) {
+            lessonToSet = lesson;
+            break;
+          }
         }
       }
+      if (lessonToSet) break;
     }
 
-    // If all completed, just set first lesson
-    this.activeLesson = this.course.sections[0].lessons[0];
+    // If all completed or none found with lessons, just set first lesson of first section if possible
+    if (!lessonToSet && this.course.sections[0].lessons?.length > 0) {
+      lessonToSet = this.course.sections[0].lessons[0];
+    }
+
+    if (lessonToSet) {
+      this.selectLesson(lessonToSet);
+    }
   }
 
   selectLesson(lesson: LessonResponse) {
+    if (this.activeLesson?.lessonId === lesson.lessonId) return;
+    
+    // Save current progress before switching
+    this.saveProgress();
+    
     this.activeLesson = lesson;
-    this.cdr.detectChanges();
+    this.currentWatchedSeconds = 0;
+    
+    // Fetch detailed progress for this lesson to resume
+    if (this.auth.isBrowser) {
+      this.learningService.getLessonProgress(this.course!.courseId, lesson.lessonId).subscribe({
+        next: (prog) => {
+          this.currentWatchedSeconds = prog.watchedSeconds;
+          this.startProgressTracking();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          // If no progress found, just start tracking from 0
+          this.startProgressTracking();
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  private startProgressTracking() {
+    if (this.progressSub) this.progressSub.unsubscribe();
+    
+    // Simulate video playing and update progress every 10 seconds
+    this.progressSub = interval(10000).subscribe(() => {
+      if (this.activeLesson) {
+        this.currentWatchedSeconds += 10;
+        this.saveProgress();
+      }
+    });
+  }
+
+  private saveProgress() {
+    if (!this.activeLesson || !this.course || !this.auth.isBrowser) return;
+
+    this.learningService.updateProgress({
+      courseId: this.course.courseId,
+      lessonId: this.activeLesson.lessonId,
+      watchedSeconds: this.currentWatchedSeconds,
+      totalDurationSeconds: this.activeLesson.durationInSeconds || 600 // fallback if duration missing
+    }).subscribe({
+      next: () => {
+        // After updating fine-grained progress, check if course-wide progress needs refresh
+        // (IsCompleted is calculated by the learning service)
+        this.refreshEnrollmentData();
+      }
+    });
+  }
+
+  private refreshEnrollmentData() {
+    this.enrollmentService.getEnrollmentById(this.enrollmentId).subscribe(res => {
+      this.enrollment = res;
+      this.cdr.detectChanges();
+    });
   }
 
   isLessonCompleted(lessonId: string): boolean {

@@ -32,6 +32,9 @@ builder.Services.AddScoped<ILessonProgressRepository, LessonProgressRepository>(
 builder.Services.AddScoped<IEnrollmentService,
     EnrollmentService.Application.Services.EnrollmentService>();
 
+// RabbitMqPublisher — Event publishing logic.
+builder.Services.AddScoped<EnrollmentService.Infrastructure.Messaging.RabbitMqPublisher>();
+
 // ─── JWT Authentication ────────────────────────────────────────────────────
 // This service does NOT issue tokens — Auth Service does.
 // It only VALIDATES tokens to know who the student/instructor is.

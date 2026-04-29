@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { timeout, retry } from 'rxjs/operators';
+import { AuthService } from '../../../services/auth.service';
 import {
   CourseService,
   CourseDetailResponse,
@@ -10,6 +12,7 @@ import {
   AddSectionRequest,
   AddLessonRequest,
 } from '../../../services/course.service';
+import { QuizService, Quiz } from '../../../services/quiz.service';
 
 @Component({
   selector: 'app-course-manage',
@@ -41,26 +44,216 @@ export class CourseManage implements OnInit {
   lessonOrder = 1;
   lessonFreePreview = false;
 
+  // Quiz Management
+  quiz: Quiz | null = null;
+  quizLoading = false;
+  showQuizForm = false;
+  editQuizId: string | null = null;
+  quizTitle = '';
+  quizPassingScore = 60;
+
+  // Question Form
+  showQuestionForm = false;
+  editQuestionId: string | null = null;
+  qText = '';
+  qType = 'MultipleChoice';
+  qCorrectAnswer = '';
+  qOptions = ''; // JSON or comma separated
+
   constructor(
     private courseService: CourseService,
+    private auth: AuthService,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private quizService: QuizService,
   ) {}
 
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id')!;
-    this.loadCourse();
+    if (this.auth.isBrowser) {
+      this.loadCourse();
+      this.loadQuiz();
+    }
   }
 
   loadCourse() {
-    this.courseService.getCourseById(this.courseId).subscribe({
-      next: (data) => {
-        this.course = data;
-        this.loading = false;
+    this.loading = true;
+    this.errorMessage = '';
+    this.courseService.getCourseById(this.courseId)
+      .pipe(
+        timeout(15000),   // fail fast if backend is unreachable
+        retry(1)          // retry once on transient failure
+      )
+      .subscribe({
+        next: (data) => {
+          this.course = data;
+          this.loading = false;
+          this.cdr.detectChanges(); // force UI update
+        },
+        error: (err) => {
+          const isTimeout = err?.name === 'TimeoutError';
+          this.errorMessage = isTimeout
+            ? 'Request timed out. The server may be slow — please retry.'
+            : 'Failed to load course. Please check your connection and retry.';
+          this.loading = false;
+          this.cdr.detectChanges(); // force UI update
+        },
+      });
+  }
+
+  loadQuiz() {
+    this.quizLoading = true;
+    this.quizService.getQuizByCourse(this.courseId).subscribe({
+      next: (quiz) => {
+        this.quiz = quiz;
+        this.quizLoading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
-        this.errorMessage = 'Failed to load course.';
-        this.loading = false;
+      error: (err) => {
+        // If 404, it means no quiz exists yet.
+        this.quiz = null;
+        this.quizLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openAddQuiz() {
+    this.editQuizId = null;
+    this.showQuizForm = true;
+    this.quizTitle = this.course?.title ? `${this.course.title} Quiz` : 'Course Quiz';
+    this.quizPassingScore = 60;
+  }
+
+  openEditQuiz() {
+    if (!this.quiz) return;
+    this.editQuizId = this.quiz.quizId;
+    this.quizTitle = this.quiz.title;
+    this.quizPassingScore = this.quiz.passingScore;
+    this.showQuizForm = true;
+  }
+
+  cancelQuizForm() {
+    this.showQuizForm = false;
+    this.editQuizId = null;
+  }
+
+  saveQuiz() {
+    const dto = {
+      courseId: this.courseId,
+      title: this.quizTitle,
+      passingScore: this.quizPassingScore
+    };
+
+    if (this.editQuizId) {
+      this.quizService.updateQuiz(this.editQuizId, dto).subscribe({
+        next: () => {
+          this.showQuizForm = false;
+          this.editQuizId = null;
+          this.showAction('Quiz updated.');
+          this.loadQuiz();
+        },
+        error: (err) => this.showAction(err.error?.message || 'Failed to update quiz.')
+      });
+    } else {
+      this.quizService.createQuiz(dto).subscribe({
+        next: (res) => {
+          this.showQuizForm = false;
+          this.showAction('Quiz created.');
+          this.loadQuiz();
+        },
+        error: (err) => this.showAction(err.error?.message || 'Failed to create quiz.')
+      });
+    }
+  }
+
+  openAddQuestion() {
+    this.editQuestionId = null;
+    this.showQuestionForm = true;
+    this.qText = '';
+    this.qType = 'MultipleChoice';
+    this.qCorrectAnswer = '';
+    this.qOptions = '';
+  }
+
+  openEditQuestion(q: any) {
+    this.editQuestionId = q.questionId;
+    this.qText = q.text;
+    this.qType = this.getQuestionTypeString(q.type);
+    this.qCorrectAnswer = q.correctAnswer;
+    this.qOptions = q.options || '';
+    this.showQuestionForm = true;
+  }
+
+  private getQuestionTypeString(typeNum: number): string {
+    switch(typeNum) {
+      case 0: return 'MultipleChoice';
+      case 1: return 'TrueFalse';
+      case 2: return 'ShortAnswer';
+      default: return 'MultipleChoice';
+    }
+  }
+
+  cancelQuestionForm() {
+    this.showQuestionForm = false;
+    this.editQuestionId = null;
+  }
+
+  saveQuestion() {
+    if (!this.quiz) return;
+    
+    // Parse options if provided
+    let optionsJson: string | undefined;
+    if (this.qOptions && this.qOptions.trim() !== '') {
+      try {
+        if (this.qOptions.trim().startsWith('[')) {
+          optionsJson = this.qOptions;
+        } else {
+          const opts = this.qOptions.split(',').map(s => s.trim()).filter(s => s !== '');
+          optionsJson = JSON.stringify(opts);
+        }
+      } catch {
+        optionsJson = this.qOptions;
+      }
+    }
+
+    const dto = {
+      text: this.qText,
+      type: this.qType,
+      correctAnswer: this.qCorrectAnswer,
+      options: optionsJson
+    };
+
+    if (this.editQuestionId) {
+      this.quizService.updateQuestion(this.editQuestionId, dto).subscribe({
+        next: () => {
+          this.showQuestionForm = false;
+          this.editQuestionId = null;
+          this.showAction('Question updated.');
+          this.loadQuiz();
+        },
+        error: (err) => this.showAction(err.error?.message || 'Failed to update question.')
+      });
+    } else {
+      this.quizService.addQuestion(this.quiz.quizId, dto).subscribe({
+        next: () => {
+          this.showQuestionForm = false;
+          this.showAction('Question added.');
+          this.loadQuiz();
+        },
+        error: (err) => this.showAction(err.error?.message || 'Failed to add question.')
+      });
+    }
+  }
+
+  deleteQuestion(questionId: string) {
+    if (!confirm('Are you sure you want to delete this question?')) return;
+    this.quizService.deleteQuestion(questionId).subscribe({
+      next: () => {
+        this.showAction('Question deleted.');
+        this.loadQuiz();
       },
+      error: (err) => this.showAction(err.error?.message || 'Failed to delete question.')
     });
   }
 

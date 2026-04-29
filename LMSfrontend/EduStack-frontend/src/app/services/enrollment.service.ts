@@ -53,7 +53,7 @@ export interface MarkLessonCompleteRequest {
 
 @Injectable({ providedIn: 'root' })
 export class EnrollmentService {
-  private baseUrl = 'http://127.0.0.1:5271/gateway/enrollments';
+  private baseUrl = 'http://localhost:5271/gateway/enrollments';
 
   constructor(
     private http: HttpClient,

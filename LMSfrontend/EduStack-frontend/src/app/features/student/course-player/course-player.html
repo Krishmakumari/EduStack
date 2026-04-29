@@ -66,6 +66,24 @@
             </button>
           </div>
         </div>
+        
+        <!-- Quiz Section -->
+        <div class="section-item mt-4">
+          <div class="section-header">
+            <span class="section-name">Course Assessment</span>
+          </div>
+          <div class="lesson-list">
+            <a [routerLink]="['/student/quiz', course.courseId]" class="lesson-btn" style="text-decoration: none;">
+              <div class="lesson-info">
+                <span class="status-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </span>
+                <span class="lesson-name" style="color: #00E5B5;">Take Final Quiz</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
