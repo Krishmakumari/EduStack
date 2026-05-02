@@ -2,8 +2,8 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="logo-icon">A</div>
-      <h2>Admin Panel</h2>
+      <div class="logo-icon">E</div>
+      <h2>EduStack Admin</h2>
     </div>
     
     <nav class="sidebar-nav">
@@ -32,7 +32,7 @@
     <div class="sidebar-footer">
       <div class="revenue-card">
         <span>Total Revenue</span>
-        <h3>{{ getTotalRevenue() | currency }}</h3>
+        <h3>{{ getTotalRevenue() | currency:'INR':'symbol':'1.2-2' }}</h3>
       </div>
       <button class="logout-btn" (click)="logout()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -61,7 +61,9 @@
     <!-- Overview Tab -->
     <div class="overview-grid" *ngIf="activeTab === 'overview'">
       <div class="stat-card">
-        <div class="stat-icon users-bg">👥</div>
+        <div class="stat-icon users-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
         <div class="stat-info">
           <span class="stat-label">Total Users</span>
           <h2 class="stat-value">{{ users.length }}</h2>
@@ -73,7 +75,9 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon courses-bg">📚</div>
+        <div class="stat-icon courses-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </div>
         <div class="stat-info">
           <span class="stat-label">Total Courses</span>
           <h2 class="stat-value">{{ courses.length }}</h2>
@@ -84,10 +88,12 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon revenue-bg">💰</div>
+        <div class="stat-icon revenue-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
         <div class="stat-info">
           <span class="stat-label">Platform Revenue</span>
-          <h2 class="stat-value">{{ getTotalRevenue() | currency }}</h2>
+          <h2 class="stat-value">{{ getTotalRevenue() | currency:'INR':'symbol':'1.2-2' }}</h2>
           <div class="stat-detail">
             <span>{{ payments.length }} Transactions</span>
           </div>
@@ -95,12 +101,14 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-icon enroll-bg">🎓</div>
+        <div class="stat-icon enroll-bg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+        </div>
         <div class="stat-info">
           <span class="stat-label">Total Enrollments</span>
           <h2 class="stat-value">{{ enrollments.length }}</h2>
           <div class="stat-detail">
-            <span>Active Learners</span>
+            <span class="text-student">Active Learners</span>
           </div>
         </div>
       </div>
@@ -143,7 +151,7 @@
     </div>
 
     <!-- Users Table -->
-    <div class="table-container shadow-sm" *ngIf="activeTab === 'users'">
+    <div class="table-container shadow-sm table-users" *ngIf="activeTab === 'users'">
       <table>
         <thead>
           <tr>
@@ -188,7 +196,7 @@
     </div>
 
     <!-- Courses Table -->
-    <div class="table-container shadow-sm" *ngIf="activeTab === 'courses'">
+    <div class="table-container shadow-sm table-courses" *ngIf="activeTab === 'courses'">
       <table>
         <thead>
           <tr>
@@ -204,7 +212,7 @@
           <tr *ngFor="let course of courses">
             <td class="font-bold">{{ course.title }}</td>
             <td>{{ course.instructorName }}</td>
-            <td>{{ course.price | currency }}</td>
+            <td>{{ course.price | currency:'INR':'symbol':'1.2-2' }}</td>
             <td>
               <span class="badge" 
                 [class.badge-primary]="course.status === 'Published'" 
@@ -215,8 +223,12 @@
               </span>
             </td>
             <td>{{ course.createdAt | date:'mediumDate' }}</td>
-            <td>
-              <button class="btn-delete" (click)="deleteCourse(course.courseId)">Delete</button>
+            <td class="action-cell">
+              <div class="action-group">
+                <button class="btn-action btn-approve" *ngIf="course.status === 'PendingApproval'" (click)="approveCourse(course.courseId)">Approve</button>
+                <button class="btn-action btn-reject" *ngIf="course.status === 'PendingApproval'" (click)="rejectCourse(course.courseId)">Reject</button>
+                <button class="btn-action btn-delete" (click)="deleteCourse(course.courseId)">Delete</button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -224,7 +236,7 @@
     </div>
 
     <!-- Payments Table -->
-    <div class="table-container shadow-sm" *ngIf="activeTab === 'payments'">
+    <div class="table-container shadow-sm table-payments" *ngIf="activeTab === 'payments'">
       <table>
         <thead>
           <tr>
@@ -240,7 +252,7 @@
           <tr *ngFor="let payment of payments">
             <td>{{ payment.studentName }}</td>
             <td>{{ payment.courseTitle }}</td>
-            <td class="font-bold">{{ payment.amount | currency }}</td>
+            <td class="font-bold">{{ payment.amount | currency:'INR':'symbol':'1.2-2' }}</td>
             <td>
               <span class="badge" 
                 [class.badge-success]="payment.status === 'Completed'"
@@ -257,7 +269,7 @@
     </div>
 
     <!-- Enrollments Table -->
-    <div class="table-container shadow-sm" *ngIf="activeTab === 'enrollments'">
+    <div class="table-container shadow-sm table-enrollments" *ngIf="activeTab === 'enrollments'">
       <table>
         <thead>
           <tr>

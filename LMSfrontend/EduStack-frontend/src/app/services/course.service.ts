@@ -157,9 +157,9 @@ export class CourseService {
     });
   }
 
-  /** POST /gateway/courses/{id}/publish — Make course visible to students */
-  publishCourse(courseId: string): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`${this.baseUrl}/${courseId}/publish`, {}, {
+  /** POST /gateway/courses/{id}/submit — Submit course for admin review */
+  submitCourse(courseId: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.baseUrl}/${courseId}/submit`, {}, {
       headers: this.authHeaders(),
     });
   }

@@ -59,14 +59,14 @@ export class MyCourses implements OnInit {
     });
   }
 
-  publishCourse(courseId: string) {
-    this.courseService.publishCourse(courseId).subscribe({
-      next: () => {
+  submitForReview(courseId: string) {
+    this.courseService.submitCourse(courseId).subscribe({
+      next: (res) => {
         const c = this.courses.find(x => x.courseId === courseId);
-        if (c) c.status = 'Published';
-        this.showAction('Course published!');
+        if (c) c.status = 'PendingApproval';
+        this.showAction(res.message || 'Course submitted for review.');
       },
-      error: (err) => this.showAction(err.error?.message || 'Publish failed.'),
+      error: (err) => this.showAction(err.error?.message || 'Submit failed.'),
     });
   }
 

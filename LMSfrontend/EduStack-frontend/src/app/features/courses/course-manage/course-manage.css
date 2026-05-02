@@ -20,6 +20,18 @@
   gap: 1rem;
 }
 
+.pending-approval-msg {
+  display: flex;
+  align-items: center;
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
 .course-status-badge {
   padding: 0.4rem 0.8rem;
   border-radius: 6px;

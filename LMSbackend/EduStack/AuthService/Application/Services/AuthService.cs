@@ -55,9 +55,12 @@ public class AuthService : IAuthService
             throw new DomainException("An account with this email already exists.");
 
         // Step 2: Validate the role string (e.g., "Student", "Instructor").
-        // TryParse is safer than Parse — it doesn't throw on invalid input.
         if (!Enum.TryParse<UserRole>(request.Role, ignoreCase: true, out var role))
             throw new DomainException("Invalid role specified.");
+
+        // SECURITY: Block public registration as Admin.
+        if (role == UserRole.Admin)
+            throw new DomainException("Admin registration is not allowed.");
 
         // Step 3: Hash the plaintext password. NEVER store the raw password.
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);

@@ -248,6 +248,32 @@
   background: #facc15;
 }
 
+.btn-publish {
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 229, 181, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(0, 229, 181, 0.2);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-publish:hover {
+  background: var(--primary);
+  color: #000;
+}
+
+.status-pending {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #facc15;
+  background: rgba(234, 179, 8, 0.1);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
 .col-actions {
   display: flex;
   gap: 0.4rem;

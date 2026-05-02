@@ -119,9 +119,9 @@ export class CourseManage implements OnInit {
   }
 
   submitForReview() {
-    this.courseService.publishCourse(this.courseId).subscribe({
-      next: () => {
-        this.showAction('Course submitted for review.');
+    this.courseService.submitCourse(this.courseId).subscribe({
+      next: (res) => {
+        this.showAction(res.message || 'Course submitted for review.');
         this.loadCourse();
       },
       error: (err) => this.showAction(err.error?.message || 'Failed to submit course.')

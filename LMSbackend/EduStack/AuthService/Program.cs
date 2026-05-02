@@ -133,6 +133,9 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ─── Seed Admin User ──────────────────────────────────────────────────────
+await DbInitializer.SeedAsync(app.Services);
+
 app.MapControllers();
 
 app.Run();

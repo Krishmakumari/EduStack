@@ -16,6 +16,10 @@
       <button class="btn-publish" *ngIf="course.status === 'Draft' || course.status === 'Rejected'" (click)="submitForReview()">
         Submit for Review
       </button>
+      <div class="pending-approval-msg" *ngIf="course.status === 'PendingApproval'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Awaiting Admin Approval
+      </div>
       <button class="btn-add" (click)="openAddSection()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
         Add Section
