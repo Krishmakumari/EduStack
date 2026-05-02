@@ -8,10 +8,12 @@ import { PaymentService, PaymentResponse } from '../../../services/payment.servi
 import { EnrollmentService } from '../../../services/enrollment.service';
 import { Navbar } from '../../../core/navbar/navbar';
 
+import { Footer } from '../../../core/footer/footer';
+
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Navbar],
+  imports: [CommonModule, FormsModule, RouterLink, Navbar, Footer],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
@@ -164,6 +166,7 @@ export class Checkout implements OnInit {
     this.enrollmentService.enroll({
       courseId: this.course.courseId,
       courseTitle: this.course.title,
+      totalLessons: this.totalLessons,
       pricePaid: this.course.price,
     }).subscribe({
       next: () => {

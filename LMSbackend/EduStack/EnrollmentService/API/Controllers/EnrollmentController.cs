@@ -52,7 +52,7 @@ public class EnrollmentController : ControllerBase
     // StudentId and StudentName come from JWT claims (not the request body).
     // Returns 400 if already enrolled, 200 with enrollment details on success.
     [HttpPost]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student,Instructor,Admin")]
     public async Task<IActionResult> Enroll([FromBody] EnrollRequest request)
     {
         var result = await _enrollmentService.EnrollAsync(
@@ -63,11 +63,11 @@ public class EnrollmentController : ControllerBase
         return Ok(result);
     }
 
-    // GET api/enrollments/my — Student only.
-    // Returns all courses the student is enrolled in (lightweight list, no lesson data).
-    // The "my" prefix scopes to the JWT user — no student can see another's list.
+    // GET api/enrollments/my — Student, Instructor, Admin.
+    // Returns all courses the user is enrolled in (lightweight list, no lesson data).
+    // The "my" prefix scopes to the JWT user — no user can see another's list.
     [HttpGet("my")]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student,Instructor,Admin")]
     public async Task<IActionResult> GetMyEnrollments()
     {
         var result = await _enrollmentService.GetMyEnrollmentsAsync(GetStudentId());
@@ -78,7 +78,7 @@ public class EnrollmentController : ControllerBase
     // Returns full enrollment detail including all lesson progress records.
     // Service validates the enrollment belongs to the JWT student (ownership check).
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student,Instructor,Admin")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _enrollmentService.GetEnrollmentByIdAsync(GetStudentId(), id);
@@ -103,7 +103,7 @@ public class EnrollmentController : ControllerBase
     // Request body: { "lessonId": "guid" }
     // Service handles upsert logic and prevents double-completion.
     [HttpPost("{id:guid}/complete-lesson")]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student,Instructor,Admin")]
     public async Task<IActionResult> MarkLessonComplete(
         Guid id, [FromBody] MarkLessonCompleteRequest request)
     {
@@ -116,11 +116,21 @@ public class EnrollmentController : ControllerBase
     // Returns progress stats: total lessons, completed count, and % complete.
     // Ownership validated in service layer — student can only see their own progress.
     [HttpGet("{id:guid}/progress")]
-    [Authorize(Roles = "Student")]
+    [Authorize(Roles = "Student,Instructor,Admin")]
     public async Task<IActionResult> GetProgress(Guid id)
     {
         var result = await _enrollmentService.GetProgressAsync(GetStudentId(), id);
         return Ok(result);
+    }
+
+    // POST api/enrollments/{id}/sync-total — Student only.
+    // Repairs the total lessons count for an existing enrollment.
+    [HttpPost("{id:guid}/sync-total")]
+    [Authorize(Roles = "Student,Instructor,Admin")]
+    public async Task<IActionResult> SyncTotalLessons(Guid id, [FromBody] SyncTotalRequest request)
+    {
+        await _enrollmentService.SyncTotalLessonsAsync(GetStudentId(), id, request.TotalLessons);
+        return Ok(new { message = "Total lessons synced successfully." });
     }
 
     // ─── Internal Cross-Service Endpoints ─────────────────────────────────────

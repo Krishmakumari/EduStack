@@ -34,6 +34,9 @@ namespace CourseService.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get;private set;  }
 
+        public Guid? CategoryId { get; private set; }
+        public string? Tags { get; private set; } // Comma separated tags
+
         // Navigation: One Course → Many Sections (cascade delete configured in EF)
         public ICollection<Section> Sections { get; private set; } = new List<Section>();
 
@@ -78,17 +81,33 @@ namespace CourseService.Domain.Entities
         }
 
         // ─── Status Lifecycle ───────────────────────────────────────────────
-        // Draft ──(Publish)──► Published ──(Unpublish)──► Draft
-        //                                       └──(Archive)──► Archived
+        // Draft ──(Submit)──► PendingApproval ──(Approve)──► Published
+        //                                      └──(Reject)──► Rejected
 
         /// <summary>
-        /// Publishes the course. Enforces business rule: must have ≥1 section.
+        /// Submits the course for admin review.
         /// </summary>
-        public void Publish()
+        public void SubmitForReview()
         {
             if (!Sections.Any())
-                throw new DomainException("Cannot publish a course with no sections.");
+                throw new DomainException("Cannot submit a course with no sections.");
+            Status = CourseStatus.PendingApproval;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Approve()
+        {
+            if (Status != CourseStatus.PendingApproval)
+                throw new DomainException("Only courses pending approval can be approved.");
             Status = CourseStatus.Published;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void Reject()
+        {
+            if (Status != CourseStatus.PendingApproval)
+                throw new DomainException("Only courses pending approval can be rejected.");
+            Status = CourseStatus.Rejected;
             UpdatedAt = DateTime.UtcNow;
         }
 

@@ -29,6 +29,7 @@ builder.Services.AddScoped<IPasswordResetRepository, PasswordResetRepository>();
 
 // ─── Services ──────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IAuthService, AuthService.Application.Services.AuthService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 //builder.Services.AddScoped<IEmailService, EmailService>();
 

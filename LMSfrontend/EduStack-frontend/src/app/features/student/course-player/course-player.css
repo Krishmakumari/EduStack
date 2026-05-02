@@ -49,20 +49,30 @@
   background: #020304;
 }
 
-.video-placeholder {
+.video-container {
   width: 100%;
   aspect-ratio: 16/9;
   background: #000;
   border-radius: 12px;
   margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
   border: 1px solid #2E3A45;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.video-container iframe {
+  width: 100%;
+  height: 100%;
 }
 
 .mock-player {
-  text-align: center; color: #4b5563;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center; 
+  color: #4b5563;
 }
 
 .lesson-header {

@@ -11,6 +11,7 @@ export interface EnrollmentResponse {
   studentName: string;
   courseId: string;
   courseTitle: string;
+  totalLessons: number;
   pricePaid: number;
   status: string;
   enrolledAt: string;
@@ -42,6 +43,7 @@ export interface ProgressResponse {
 export interface EnrollRequest {
   courseId: string;
   courseTitle: string;
+  totalLessons: number;
   pricePaid: number;
 }
 
@@ -95,6 +97,15 @@ export class EnrollmentService {
     return this.http.get<ProgressResponse>(`${this.baseUrl}/${enrollmentId}/progress`, {
       headers: this.authHeaders(),
     });
+  }
+
+  /** POST /gateway/enrollments/{id}/sync-total — Repair missing total lessons count */
+  syncTotalLessons(enrollmentId: string, totalLessons: number): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/${enrollmentId}/sync-total`,
+      { totalLessons },
+      { headers: this.authHeaders() }
+    );
   }
 
   private authHeaders(): HttpHeaders {

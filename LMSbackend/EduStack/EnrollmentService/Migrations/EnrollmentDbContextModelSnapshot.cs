@@ -58,6 +58,9 @@ namespace EnrollmentService.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("TotalLessons")
+                        .HasColumnType("int");
+
                     b.HasKey("EnrollmentId");
 
                     b.HasIndex("StudentId", "CourseId")

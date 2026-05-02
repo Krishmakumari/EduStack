@@ -45,6 +45,11 @@ public class PaymentRepository : IPaymentRepository
             .FirstOrDefaultAsync(p => p.StudentId == studentId
                                    && p.CourseId == courseId);
 
+    public async Task<IEnumerable<Payment>> GetAllAsync()
+        => await _context.Payments
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+
     // Marks entity as Added — INSERT runs when SaveChangesAsync() is called.
     public async Task AddAsync(Payment payment)
         => await _context.Payments.AddAsync(payment);

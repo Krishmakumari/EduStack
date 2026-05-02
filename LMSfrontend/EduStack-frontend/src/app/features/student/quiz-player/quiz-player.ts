@@ -85,13 +85,18 @@ export class QuizPlayer implements OnInit {
 
   getOptions(question: Question): string[] {
     if (question.options) {
-      try {
-        return JSON.parse(question.options);
-      } catch (e) {
-        return [];
+      const trimmed = question.options.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          return JSON.parse(trimmed);
+        } catch (e) {
+          // fallback to comma split if JSON parse fails despite looking like JSON
+        }
       }
+      // Handle comma-separated or simple list
+      return trimmed.split(',').map(s => s.trim()).filter(s => s !== '');
     }
-    if (question.type === 1) { // Assuming 1 is TrueFalse
+    if (question.type === 1) { // TrueFalse
       return ['True', 'False'];
     }
     return [];

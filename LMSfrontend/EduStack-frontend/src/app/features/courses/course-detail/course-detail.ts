@@ -6,10 +6,12 @@ import { AuthService } from '../../../services/auth.service';
 import { EnrollmentService } from '../../../services/enrollment.service';
 import { Navbar } from '../../../core/navbar/navbar';
 
+import { Footer } from '../../../core/footer/footer';
+
 @Component({
   selector: 'app-course-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, Navbar],
+  imports: [CommonModule, RouterLink, Navbar, Footer],
   templateUrl: './course-detail.html',
   styleUrl: './course-detail.css',
 })
@@ -19,6 +21,8 @@ export class CourseDetail implements OnInit {
   errorMessage = '';
   expandedSections: Set<string> = new Set();
   enrolling = false;
+  isEnrolled = false;
+  enrolledEnrollmentId = '';
 
   constructor(
     private courseService: CourseService,
@@ -42,6 +46,8 @@ export class CourseDetail implements OnInit {
           if (data.sections && data.sections.length > 0) {
             this.expandedSections.add(data.sections[0].sectionId);
           }
+          // Check if user is already enrolled in this course
+          this.checkEnrollmentStatus(id);
           console.log('CourseDetail: Processed data successfully.');
           this.cdr.detectChanges(); // Force UI update
         } catch (e) {
@@ -77,6 +83,23 @@ export class CourseDetail implements OnInit {
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
   }
 
+  /** Check if the current user is already enrolled in this course */
+  private checkEnrollmentStatus(courseId: string) {
+    if (!this.authService.isBrowser || !this.authService.isLoggedIn()) return;
+
+    this.enrollmentService.getMyEnrollments().subscribe({
+      next: (enrollments) => {
+        const match = enrollments.find(e => e.courseId === courseId);
+        if (match) {
+          this.isEnrolled = true;
+          this.enrolledEnrollmentId = match.enrollmentId;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => { /* silently ignore — user might not be a student */ }
+    });
+  }
+
   enroll() {
     if (!this.authService.isBrowser) return;
 
@@ -86,6 +109,12 @@ export class CourseDetail implements OnInit {
     }
 
     if (!this.course) return;
+
+    // Already enrolled → go to learning page
+    if (this.isEnrolled && this.enrolledEnrollmentId) {
+      this.router.navigate(['/student/learning', this.enrolledEnrollmentId]);
+      return;
+    }
 
     // Paid courses → redirect to checkout page for payment flow
     if (this.course.price > 0) {
@@ -98,6 +127,7 @@ export class CourseDetail implements OnInit {
     this.enrollmentService.enroll({
       courseId: this.course.courseId,
       courseTitle: this.course.title,
+      totalLessons: this.totalLessons,
       pricePaid: this.course.price
     }).subscribe({
       next: (res) => {

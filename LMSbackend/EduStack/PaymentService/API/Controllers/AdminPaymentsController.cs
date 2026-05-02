@@ -31,4 +31,14 @@ public class AdminPaymentsController : ControllerBase
         var result = await _paymentService.GetPaymentsByCourseAsync(courseId);
         return Ok(result);
     }
+
+    // GET api/admin/payments
+    // Returns all payments across the system. Admin only.
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllPayments()
+    {
+        var result = await _paymentService.GetAllPaymentsAsync();
+        return Ok(result);
+    }
 }

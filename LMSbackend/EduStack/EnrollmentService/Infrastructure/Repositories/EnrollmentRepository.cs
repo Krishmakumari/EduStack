@@ -54,6 +54,11 @@ public class EnrollmentRepository : IEnrollmentRepository
             .OrderByDescending(e => e.EnrolledAt)  // most recently enrolled first
             .ToListAsync();
 
+    public async Task<IEnumerable<Enrollment>> GetAllAsync()
+        => await _context.Enrollments
+            .OrderByDescending(e => e.EnrolledAt)
+            .ToListAsync();
+
     // Marks entity as Added in EF change tracker — INSERT runs when SaveChangesAsync() is called.
     public async Task AddAsync(Enrollment enrollment)
         => await _context.Enrollments.AddAsync(enrollment);

@@ -6,6 +6,7 @@
   <Project Path="EnrollmentService/EnrollmentService.csproj" Id="0a8966f3-07f7-49c1-8de9-36850a7e9915" />
   <Project Path="LearningService/LearningService.csproj" Id="c1503e44-6f99-4513-9a18-320f959f91a7" />
   <Project Path="NotificationService/NotificationService.csproj" Id="1e7b4054-bf39-42a9-88c4-f5da89384d4f" />
+  <Project Path="NUnitTesting/NUnitTesting.csproj" Id="59a70864-0651-4723-af1b-b5522b591956" />
   <Project Path="PaymentService/PaymentService.csproj" Id="01fad24d-b6bf-4ed8-a036-9b5ad5e96257" />
   <Project Path="QuizService/QuizService.csproj" Id="4be3132e-8b0f-4fdb-b09a-b497dbcf9445" />
 </Solution>

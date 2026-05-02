@@ -164,6 +164,12 @@ public class PaymentService : IPaymentService
         return payments.Select(MapToPaymentResponse);
     }
 
+    public async Task<IEnumerable<PaymentResponse>> GetAllPaymentsAsync()
+    {
+        var payments = await _paymentRepo.GetAllAsync();
+        return payments.Select(MapToPaymentResponse);
+    }
+
     // ─── Mapping Helper ───────────────────────────────────────────────────────
     // Manual mapping instead of AutoMapper — simpler and easier to debug.
     // Status and Method enums converted to strings for JSON readability.

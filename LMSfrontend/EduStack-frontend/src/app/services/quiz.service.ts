@@ -57,14 +57,13 @@ export interface CreateQuestionDto {
   providedIn: 'root'
 })
 export class QuizService {
-  /** Gateway URL — Ocelot maps /gateway/quizzes/* → /api/quizzes/* on QuizService (port 5021) */
-  private baseUrl = 'http://localhost:5271/gateway/quizzes';
+  private baseUrl = `http://localhost:5271/gateway/quizzes`;
 
   constructor(
     private http: HttpClient,
     private authService: AuthService,
   ) { }
-  
+
   get isBrowser(): boolean {
     return this.authService.isBrowser;
   }

@@ -1,29 +1,29 @@
-<div class="auth-container">
-  <div class="auth-content">
-    <div class="auth-left">
-      <div class="logo-container">
-        <span class="logo-text"><span class="logo-edu">Edu</span><span class="logo-stack">Stack</span></span>
+<div class="auth-split-container">
+  <div class="auth-split-card">
+    <!-- Left Panel: Gradient with Welcome Message -->
+    <div class="panel-left">
+      <div class="panel-left-bg"></div>
+      <div class="panel-left-content">
+        <div class="brand-logo">
+          <span class="logo-edu">Edu</span><span class="logo-stack">Stack</span>
+        </div>
+        <h1 class="panel-title">Welcome<br>Back!</h1>
+        <p class="panel-description">
+          Enter your credentials to access your courses, mentors and learning streaks.
+        </p>
+        <div class="panel-divider"></div>
+        <p class="panel-switch-text">Don't have an account?</p>
+        <a routerLink="/auth/register" class="btn-outline" id="go-to-signup">
+          SIGN UP
+        </a>
       </div>
+    </div>
 
-      <div class="welcome-label">
-        <svg viewBox="0 0 24 24">
-          <path
-            d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2zm0 4.1L10.5 10.5 6.1 12l4.4 1.5L12 17.9l1.5-4.4L17.9 12l-4.4-1.5L12 6.1z" />
-        </svg>
-        Welcome Back
-      </div>
+    <!-- Right Panel: Login Form -->
+    <div class="panel-right">
+      <h2 class="form-title">Sign In to Account</h2>
 
-      <h1 class="auth-heading">
-        Continue your
-        <span class="auth-heading-highlight">learning journey.</span>
-      </h1>
 
-      <p class="auth-subheading">Sign in to access your courses, mentors and streaks.</p>
-
-      <div class="auth-pill">
-        <a routerLink="/auth/login" class="tab active">Sign In</a>
-        <a routerLink="/auth/register" class="tab">Create Account</a>
-      </div>
 
       <!-- Success Message (from register/reset redirect) -->
       <div class="auth-success" *ngIf="successMessage">{{ successMessage }}</div>
@@ -31,35 +31,41 @@
       <!-- Error Message -->
       <div class="auth-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-      <form class="auth-form" (ngSubmit)="onLogin()">
-        <div style="position: relative;">
-          <label class="input-label">Email</label>
-          <div class="input-group">
-            <span class="icon user-icon"></span>
-            <input type="email" [(ngModel)]="email" name="email" placeholder="you@edustack.io" required />
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="form-field">
+          <div class="input-wrapper" [class.input-error]="submitted && f['email'].errors">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+            </svg>
+            <input type="email" formControlName="email" placeholder="Email" id="login-email" />
+          </div>
+          <div class="field-error" *ngIf="submitted && f['email'].errors">
+            <span *ngIf="f['email'].errors['required']">Email is required</span>
+            <span *ngIf="f['email'].errors['email']">Please enter a valid email address</span>
           </div>
         </div>
 
-        <div style="position: relative;">
-          <label class="input-label">Password</label>
-          <a routerLink="/auth/forgot-password" class="forgot-link">Forgot password?</a>
-          <div class="input-group">
-            <span class="icon lock-icon"></span>
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Enter your password" required />
+        <div class="form-field">
+          <div class="input-wrapper" [class.input-error]="submitted && f['password'].errors">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" />
+            </svg>
+            <input type="password" formControlName="password" placeholder="Password" id="login-password" />
+          </div>
+          <div class="field-error" *ngIf="submitted && f['password'].errors">
+            <span *ngIf="f['password'].errors['required']">Password is required</span>
+            <span *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</span>
           </div>
         </div>
 
-        <div class="form-options">
-          <div class="checkbox-custom checked"></div>
-          <span class="checkbox-label">Keep me signed in for 30 days</span>
+        <div class="form-meta">
+          <a routerLink="/auth/forgot-password" class="forgot-link" id="forgot-password-link">Forgot your password?</a>
         </div>
 
-        <button type="submit" class="btn-primary" [disabled]="loading">
-          {{ loading ? 'Signing In...' : 'Sign In' }}
-          <svg *ngIf="!loading" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
+        <button type="submit" class="btn-submit" [disabled]="loading" id="login-submit-btn">
+          {{ loading ? 'SIGNING IN...' : 'SIGN IN' }}
         </button>
       </form>
     </div>

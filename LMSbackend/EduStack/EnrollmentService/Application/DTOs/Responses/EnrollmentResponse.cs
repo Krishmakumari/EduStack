@@ -12,6 +12,7 @@ public class EnrollmentResponse
     public string StudentName { get; set; } = default!;  // denormalized from JWT at enrollment
     public Guid CourseId { get; set; }
     public string CourseTitle { get; set; } = default!;  // denormalized from request at enrollment
+    public int TotalLessons { get; set; }
     public decimal PricePaid { get; set; }
     public string Status { get; set; } = default!;       // "Active", "Completed", or "Cancelled"
     public DateTime EnrolledAt { get; set; }

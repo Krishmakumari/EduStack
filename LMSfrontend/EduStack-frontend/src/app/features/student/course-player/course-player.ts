@@ -1,5 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EnrollmentService, EnrollmentDetailResponse, ProgressResponse } from '../../../services/enrollment.service';
 import { CourseService, CourseDetailResponse, LessonResponse } from '../../../services/course.service';
@@ -33,6 +34,7 @@ export class CoursePlayer implements OnInit {
     private courseService: CourseService,
     private learningService: LearningService,
     private auth: AuthService,
+    private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -52,6 +54,15 @@ export class CoursePlayer implements OnInit {
         this.courseService.getCourseById(enrollRes.courseId).subscribe({
           next: (courseRes) => {
             this.course = courseRes;
+
+            // Self-healing: If enrollment record is missing totalLessons (legacy or failed sync), update it now
+            if (this.enrollment && (this.enrollment.totalLessons === 0 || !this.enrollment.totalLessons)) {
+              const realTotal = this.course.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0);
+              if (realTotal > 0) {
+                this.enrollmentService.syncTotalLessons(this.enrollmentId, realTotal).subscribe();
+                this.enrollment.totalLessons = realTotal;
+              }
+            }
             
             // Set initial active lesson (first lesson of first section, or first incomplete lesson)
             this.setInitialLesson();
@@ -198,5 +209,30 @@ export class CoursePlayer implements OnInit {
     if (total === 0) return 0;
     const completed = this.enrollment.lessonProgresses.filter(p => p.isCompleted).length;
     return Math.round((completed / total) * 100);
+  }
+
+  getSafeVideoUrl(url: string | null | undefined): SafeResourceUrl | null {
+    if (!url) return null;
+
+    let videoId = '';
+    
+    // Handle youtu.be/xxx
+    if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1].split(/[?#]/)[0];
+    } 
+    // Handle youtube.com/watch?v=xxx
+    else if (url.includes('v=')) {
+      videoId = url.split('v=')[1].split('&')[0];
+    }
+    // Handle youtube.com/embed/xxx
+    else if (url.includes('embed/')) {
+      videoId = url.split('embed/')[1].split(/[?#]/)[0];
+    }
+
+    if (videoId) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`);
+    }
+
+    return null;
   }
 }

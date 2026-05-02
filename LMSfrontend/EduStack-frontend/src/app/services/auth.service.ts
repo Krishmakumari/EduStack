@@ -144,6 +144,10 @@ export class AuthService {
     return !!this.getAccessToken();
   }
 
+  getUserRole(): string {
+    return this.isBrowser ? (localStorage.getItem('userRole') || '') : '';
+  }
+
   logout(): void {
     if (!this.isBrowser) return;
     localStorage.removeItem('accessToken');

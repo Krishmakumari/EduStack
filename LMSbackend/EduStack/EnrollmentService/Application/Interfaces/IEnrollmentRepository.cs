@@ -23,6 +23,9 @@ public interface IEnrollmentRepository
     // All enrollments for a course (instructor view), ordered by most recent.
     Task<IEnumerable<Enrollment>> GetByCourseIdAsync(Guid courseId);
 
+    // All enrollments across the system.
+    Task<IEnumerable<Enrollment>> GetAllAsync();
+
     Task AddAsync(Enrollment enrollment);
     Task SaveChangesAsync();
 }

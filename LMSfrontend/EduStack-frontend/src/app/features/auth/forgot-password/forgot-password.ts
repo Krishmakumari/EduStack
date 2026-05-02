@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
@@ -7,31 +7,46 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [FormsModule, RouterLink, CommonModule],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule],
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.css',
 })
 export class ForgotPassword {
-  email = '';
+  forgotForm: FormGroup;
   errorMessage = '';
   successMessage = '';
   loading = false;
+  submitted = false;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+  ) {
+    this.forgotForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+    });
+  }
+
+  get f() { return this.forgotForm.controls; }
 
   onSubmit() {
+    this.submitted = true;
     this.errorMessage = '';
     this.successMessage = '';
+
+    if (this.forgotForm.invalid) return;
+
     this.loading = true;
 
-    this.auth.forgotPassword({ email: this.email }).subscribe({
+    this.auth.forgotPassword({ email: this.forgotForm.value.email }).subscribe({
       next: (res) => {
         this.loading = false;
         this.successMessage = res.message;
         // Navigate to reset-password page after a short delay, pre-filling the email
         setTimeout(() => {
           this.router.navigate(['/auth/reset-password'], {
-            queryParams: { email: this.email },
+            queryParams: { email: this.forgotForm.value.email },
           });
         }, 2000);
       },

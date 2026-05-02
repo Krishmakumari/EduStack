@@ -217,6 +217,15 @@ export class CourseService {
     });
   }
 
+  /** POST /gateway/media/upload — Upload a physical image file */
+  uploadThumbnail(file: File): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string }>('http://localhost:5271/gateway/media/upload', formData, {
+      headers: this.authHeaders(),
+    });
+  }
+
   // ─── Auth Helper ──────────────────────────────────────────────────────────
 
   private authHeaders(): HttpHeaders {

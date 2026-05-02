@@ -4,10 +4,13 @@ import { RouterLink } from '@angular/router';
 import { CourseService, CourseResponse } from '../../../services/course.service';
 import { AuthService } from '../../../services/auth.service';
 
+import { Navbar } from '../../../core/navbar/navbar';
+import { Footer } from '../../../core/footer/footer';
+
 @Component({
   selector: 'app-my-courses',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Navbar, Footer],
   templateUrl: './my-courses.html',
   styleUrl: './my-courses.css',
 })

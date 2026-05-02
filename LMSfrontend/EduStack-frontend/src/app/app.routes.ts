@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './guards/admin.guard';
+import { instructorGuard } from './guards/instructor.guard';
+import { studentGuard } from './guards/student.guard';
 
 export const routes: Routes = [
   {
@@ -24,6 +27,7 @@ export const routes: Routes = [
   },
   {
     path: 'instructor',
+    canActivate: [instructorGuard],
     children: [
       { path: 'my-courses', loadComponent: () => import('./features/courses/my-courses/my-courses').then(m => m.MyCourses) },
       { path: 'courses/new', loadComponent: () => import('./features/courses/course-form/course-form').then(m => m.CourseForm) },
@@ -33,6 +37,7 @@ export const routes: Routes = [
   },
   {
     path: 'student',
+    canActivate: [studentGuard],
     children: [
       { path: 'my-learning', loadComponent: () => import('./features/student/my-learning/my-learning').then(m => m.MyLearning) },
       { path: 'learning/:enrollmentId', loadComponent: () => import('./features/student/course-player/course-player').then(m => m.CoursePlayer) },
@@ -41,4 +46,11 @@ export const routes: Routes = [
       { path: 'payments', loadComponent: () => import('./features/student/payments/payments').then(m => m.Payments) },
     ]
   },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    children: [
+      { path: 'dashboard', loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
+    ]
+  }
 ];

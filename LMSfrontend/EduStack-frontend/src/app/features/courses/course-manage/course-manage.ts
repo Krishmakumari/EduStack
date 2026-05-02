@@ -66,7 +66,7 @@ export class CourseManage implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private quizService: QuizService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id')!;
@@ -118,6 +118,16 @@ export class CourseManage implements OnInit {
     });
   }
 
+  submitForReview() {
+    this.courseService.publishCourse(this.courseId).subscribe({
+      next: () => {
+        this.showAction('Course submitted for review.');
+        this.loadCourse();
+      },
+      error: (err) => this.showAction(err.error?.message || 'Failed to submit course.')
+    });
+  }
+
   openAddQuiz() {
     this.editQuizId = null;
     this.showQuizForm = true;
@@ -139,9 +149,17 @@ export class CourseManage implements OnInit {
   }
 
   saveQuiz() {
+    if (!this.quizTitle.trim()) {
+      this.showAction('Quiz title is required.');
+      return;
+    }
+    if (this.quizPassingScore < 0 || this.quizPassingScore > 100) {
+      this.showAction('Passing score must be between 0 and 100.');
+      return;
+    }
     const dto = {
       courseId: this.courseId,
-      title: this.quizTitle,
+      title: this.quizTitle.trim(),
       passingScore: this.quizPassingScore
     };
 
@@ -186,7 +204,7 @@ export class CourseManage implements OnInit {
   }
 
   private getQuestionTypeString(typeNum: number): string {
-    switch(typeNum) {
+    switch (typeNum) {
       case 0: return 'MultipleChoice';
       case 1: return 'TrueFalse';
       case 2: return 'ShortAnswer';
@@ -201,7 +219,20 @@ export class CourseManage implements OnInit {
 
   saveQuestion() {
     if (!this.quiz) return;
-    
+
+    if (!this.qText.trim()) {
+      this.showAction('Question text is required.');
+      return;
+    }
+    if (!this.qCorrectAnswer.trim()) {
+      this.showAction('Correct answer is required.');
+      return;
+    }
+    if (this.qType === 'MultipleChoice' && !this.qOptions.trim()) {
+      this.showAction('Options are required for multiple choice questions.');
+      return;
+    }
+
     // Parse options if provided
     let optionsJson: string | undefined;
     if (this.qOptions && this.qOptions.trim() !== '') {
@@ -218,9 +249,9 @@ export class CourseManage implements OnInit {
     }
 
     const dto = {
-      text: this.qText,
+      text: this.qText.trim(),
       type: this.qType,
-      correctAnswer: this.qCorrectAnswer,
+      correctAnswer: this.qCorrectAnswer.trim(),
       options: optionsJson
     };
 
@@ -279,7 +310,15 @@ export class CourseManage implements OnInit {
   }
 
   saveSection() {
-    const data: AddSectionRequest = { title: this.sectionTitle, order: this.sectionOrder };
+    if (!this.sectionTitle.trim()) {
+      this.showAction('Section title is required.');
+      return;
+    }
+    if (this.sectionOrder < 1) {
+      this.showAction('Section order must be at least 1.');
+      return;
+    }
+    const data: AddSectionRequest = { title: this.sectionTitle.trim(), order: this.sectionOrder };
 
     if (this.editSectionId) {
       this.courseService.updateSection(this.editSectionId, data).subscribe({
@@ -347,11 +386,27 @@ export class CourseManage implements OnInit {
   }
 
   saveLesson() {
+    if (!this.lessonTitle.trim()) {
+      this.showAction('Lesson title is required.');
+      return;
+    }
+    if (!this.lessonVideoUrl.trim()) {
+      this.showAction('Video URL is required.');
+      return;
+    }
+    if (this.lessonDuration < 1) {
+      this.showAction('Duration must be at least 1 second.');
+      return;
+    }
+    if (this.lessonOrder < 1) {
+      this.showAction('Lesson order must be at least 1.');
+      return;
+    }
     const sectionId = this.showLessonFormFor!;
     const data: AddLessonRequest = {
-      title: this.lessonTitle,
-      videoUrl: this.lessonVideoUrl || null,
-      content: this.lessonContent || null,
+      title: this.lessonTitle.trim(),
+      videoUrl: this.lessonVideoUrl.trim() || null,
+      content: this.lessonContent.trim() || null,
       durationInSeconds: this.lessonDuration,
       order: this.lessonOrder,
       isFreePreview: this.lessonFreePreview,

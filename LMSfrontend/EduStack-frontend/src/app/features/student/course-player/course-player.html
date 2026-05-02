@@ -20,8 +20,14 @@
   <div class="player-main">
     <!-- Lesson Content Area -->
     <div class="content-area">
-      <div class="video-placeholder" *ngIf="activeLesson?.videoUrl">
-        <div class="mock-player">
+      <div class="video-container" *ngIf="activeLesson?.videoUrl">
+        <iframe *ngIf="getSafeVideoUrl(activeLesson?.videoUrl) as safeUrl"
+          [src]="safeUrl"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+        <div class="mock-player" *ngIf="!getSafeVideoUrl(activeLesson?.videoUrl)">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           <p>Video: {{ activeLesson?.videoUrl }}</p>
         </div>

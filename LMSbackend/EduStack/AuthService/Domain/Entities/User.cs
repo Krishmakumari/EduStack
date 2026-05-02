@@ -1,4 +1,3 @@
-
 //->Represents a registered user (Student, Instructor, or Admin).       
 //   Every other service in the system identifies users by the UserId    
 //  that is generated here during registration.                         
@@ -99,4 +98,5 @@ public class User
     public void UpdatePasswordHash(string newHash) => PasswordHash = newHash;
     public void EnableTwoFactor(string secret) { TwoFactorEnabled = true; TwoFactorSecret = secret; }
     public void DisableTwoFactor() { TwoFactorEnabled = false; TwoFactorSecret = null; }
+    public void UpdateRole(UserRole role) => Role = role;
 }

@@ -30,4 +30,10 @@ public interface IEnrollmentService
 
     // Cross-service helper: checks if a user is enrolled in a course.
     Task<bool> IsUserEnrolledAsync(Guid studentId, Guid courseId);
+
+    // Get all enrollments across the system (Admin only).
+    Task<IEnumerable<EnrollmentResponse>> GetAllEnrollmentsAsync();
+
+    // Repair/Sync total lessons — used for existing records or when course length changes.
+    Task SyncTotalLessonsAsync(Guid studentId, Guid enrollmentId, int totalLessons);
 }

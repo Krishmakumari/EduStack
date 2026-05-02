@@ -106,12 +106,12 @@ public class CourseController : ControllerBase
 
     // POST api/courses/{id}/publish — Instructor/Admin only.
     // Makes the course visible to students. Must have ≥1 section.
-    [HttpPost("{id:guid}/publish")]
+    [HttpPost("{id:guid}/submit")]
     [Authorize(Roles = "Instructor,Admin")]
-    public async Task<IActionResult> Publish(Guid id)
+    public async Task<IActionResult> Submit(Guid id)
     {
-        await _courseService.PublishCourseAsync(GetInstructorId(), id);
-        return Ok(new { message = "Course published successfully." });
+        await _courseService.SubmitCourseForReviewAsync(GetInstructorId(), id);
+        return Ok(new { message = "Course submitted for review successfully." });
     }
 
     // POST api/courses/{id}/unpublish — Instructor/Admin only.
@@ -187,4 +187,5 @@ public class CourseController : ControllerBase
         await _courseService.DeleteLessonAsync(GetInstructorId(), lessonId);
         return Ok(new { message = "Lesson deleted successfully." });
     }
+
 }

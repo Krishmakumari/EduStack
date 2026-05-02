@@ -9,10 +9,18 @@
       <h1 class="manage-title">{{ course.title }}</h1>
       <p class="manage-sub">Manage sections and lessons for this course.</p>
     </div>
-    <button class="btn-add" (click)="openAddSection()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-      Add Section
-    </button>
+    <div class="header-actions">
+      <div class="course-status-badge" [class]="course.status.toLowerCase()">
+        Status: {{ course.status }}
+      </div>
+      <button class="btn-publish" *ngIf="course.status === 'Draft' || course.status === 'Rejected'" (click)="submitForReview()">
+        Submit for Review
+      </button>
+      <button class="btn-add" (click)="openAddSection()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Add Section
+      </button>
+    </div>
   </div>
 
   <!-- Toast -->
@@ -209,7 +217,7 @@
         <div class="section-info">
           <span class="section-name">{{ quiz.title }}</span>
           <span class="lesson-count">Passing Score: {{ quiz.passingScore }}%</span>
-          <span class="lesson-count">{{ quiz.questions?.length || 0 }} questions</span>
+          <span class="lesson-count">{{ quiz.questions.length }} questions</span>
         </div>
       </div>
       

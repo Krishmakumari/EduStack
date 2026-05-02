@@ -2,8 +2,10 @@
 <div class="detail-page" *ngIf="!loading && course">
   <!-- Hero Section -->
   <div class="detail-hero">
-  <div class="detail-hero">
     <div class="hero-content">
+      <div class="hero-thumbnail" *ngIf="course.thumbnailUrl">
+        <img [src]="course.thumbnailUrl" alt="Course Thumbnail" />
+      </div>
       <div class="hero-info">
         <div class="hero-badges">
           <span class="badge level-{{ course.level.toLowerCase() }}">{{ course.level }}</span>
@@ -29,9 +31,13 @@
       </div>
       <div class="hero-sidebar">
         <div class="price-card">
-          <div class="price-tag">{{ formatPrice(course.price) }}</div>
-          <button class="btn-enroll" (click)="enroll()" [disabled]="enrolling">
-            {{ enrolling ? 'Enrolling...' : (course.price > 0 ? 'Buy Now' : 'Enroll Free') }}
+          <div class="price-tag" *ngIf="!isEnrolled">{{ formatPrice(course.price) }}</div>
+          <div class="price-tag enrolled-tag" *ngIf="isEnrolled">✓ Enrolled</div>
+          <button class="btn-enroll" [class.btn-enrolled]="isEnrolled" (click)="enroll()" [disabled]="enrolling">
+            <ng-container *ngIf="isEnrolled">Go to Course →</ng-container>
+            <ng-container *ngIf="!isEnrolled">
+              {{ enrolling ? 'Enrolling...' : (course.price > 0 ? 'Buy Now' : 'Enroll Free') }}
+            </ng-container>
           </button>
           <div class="price-features">
             <span>✓ Full lifetime access</span>
@@ -91,3 +97,5 @@
   <p>{{ errorMessage }}</p>
   <a routerLink="/courses" class="back-link-error">← Back to Courses</a>
 </div>
+
+<app-footer></app-footer>

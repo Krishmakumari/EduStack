@@ -1,92 +1,121 @@
-<div class="auth-container">
-  <div class="auth-content">
-    <div class="auth-left">
-      <div class="logo-container">
-        <span class="logo-text"><span class="logo-edu">Edu</span><span class="logo-stack">Stack</span></span>
-      </div>
+<div class="auth-split-container">
+  <div class="auth-split-card">
+    <!-- Left Panel: Registration Form -->
+    <div class="panel-right panel-right-register">
+      <h2 class="form-title">Create Account</h2>
 
-      <div class="welcome-label">
-        <svg viewBox="0 0 24 24">
-          <path
-            d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2zm0 4.1L10.5 10.5 6.1 12l4.4 1.5L12 17.9l1.5-4.4L17.9 12l-4.4-1.5L12 6.1z" />
-        </svg>
-        Join Us
-      </div>
 
-      <h1 class="auth-heading">
-        Start your
-        <span class="auth-heading-highlight">learning journey.</span>
-      </h1>
-
-      <p class="auth-subheading">Create an account to access courses, mentors and streaks.</p>
-
-      <div class="auth-pill">
-        <a routerLink="/auth/login" class="tab">Sign In</a>
-        <a routerLink="/auth/register" class="tab active">Create Account</a>
-      </div>
 
       <!-- Error Message -->
       <div class="auth-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-      <form class="auth-form" (ngSubmit)="onRegister()">
-        <div style="position: relative;">
-          <label class="input-label">Full Name</label>
-          <div class="input-group">
-            <span class="icon user-icon"></span>
-            <input type="text" [(ngModel)]="name" name="name" placeholder="John Doe" required />
+      <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        <div class="form-field">
+          <div class="input-wrapper" [class.input-error]="submitted && f['name'].errors">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+            <input type="text" formControlName="name" placeholder="Full Name" id="register-name" />
+          </div>
+          <div class="field-error" *ngIf="submitted && f['name'].errors">
+            <span *ngIf="f['name'].errors['required']">Full name is required</span>
+            <span *ngIf="f['name'].errors['minlength']">Name must be at least 2 characters</span>
+            <span *ngIf="f['name'].errors['maxlength']">Name cannot exceed 50 characters</span>
           </div>
         </div>
 
-        <div style="position: relative;">
-          <label class="input-label">Email</label>
-          <div class="input-group">
-            <span class="icon user-icon"></span>
-            <input type="email" [(ngModel)]="email" name="email" placeholder="you@edustack.io" required />
+        <div class="form-field">
+          <div class="input-wrapper" [class.input-error]="submitted && f['email'].errors">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" />
+            </svg>
+            <input type="email" formControlName="email" placeholder="Email" id="register-email" />
+          </div>
+          <div class="field-error" *ngIf="submitted && f['email'].errors">
+            <span *ngIf="f['email'].errors['required']">Email is required</span>
+            <span *ngIf="f['email'].errors['email']">Please enter a valid email address</span>
           </div>
         </div>
 
-        <div style="position: relative;">
-          <label class="input-label">I am a</label>
-          <div class="input-group">
-            <span class="icon role-icon"></span>
-            <select [(ngModel)]="role" name="role" required>
+        <div class="form-field">
+          <div class="input-wrapper">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+            <select formControlName="role" id="register-role">
               <option value="Student">Student</option>
               <option value="Instructor">Instructor</option>
             </select>
           </div>
         </div>
 
-        <div style="position: relative;">
-          <label class="input-label">Password</label>
-          <div class="input-group">
-            <span class="icon lock-icon"></span>
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Create a password" required />
+        <div class="form-field">
+          <div class="input-wrapper" [class.input-error]="submitted && f['password'].errors">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" />
+            </svg>
+            <input type="password" formControlName="password" placeholder="Password" id="register-password" />
+          </div>
+          <div class="field-error" *ngIf="submitted && f['password'].errors">
+            <span *ngIf="f['password'].errors['required']">Password is required</span>
+            <span *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</span>
+            <span *ngIf="f['password'].errors['pattern'] && !f['password'].errors['minlength']">
+              Must include uppercase, lowercase, number &amp; special character
+            </span>
+          </div>
+          <!-- Password strength hints -->
+          <div class="password-hints" *ngIf="f['password'].dirty && f['password'].errors">
+            <span [class.hint-valid]="registerForm.value.password.length >= 8">✓ 8+ chars</span>
+            <span [class.hint-valid]="registerForm.value.password.match('[A-Z]')">✓ Uppercase</span>
+            <span [class.hint-valid]="registerForm.value.password.match('[a-z]')">✓ Lowercase</span>
+            <span [class.hint-valid]="registerForm.value.password.match('[0-9]')">✓ Number</span>
+            <span [class.hint-valid]="registerForm.value.password.match('[\\W_]')">✓ Special</span>
           </div>
         </div>
 
-        <div style="position: relative;">
-          <label class="input-label">Confirm Password</label>
-          <div class="input-group">
-            <span class="icon lock-icon"></span>
-            <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword"
-              placeholder="Re-enter your password" required />
+        <div class="form-field">
+          <div class="input-wrapper"
+            [class.input-error]="(submitted && f['confirmPassword'].errors) || passwordMismatch">
+            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" />
+            </svg>
+            <input type="password" formControlName="confirmPassword" placeholder="Confirm Password"
+              id="register-confirm-password" />
+          </div>
+          <div class="field-error" *ngIf="submitted && f['confirmPassword'].errors?.['required']">
+            Confirm password is required
           </div>
           <div class="field-error" *ngIf="passwordMismatch">Passwords do not match</div>
         </div>
 
-        <div class="form-options">
-          <div class="checkbox-custom checked"></div>
-          <span class="checkbox-label">I agree to Terms & Conditions</span>
-        </div>
-
-        <button type="submit" class="btn-primary" [disabled]="loading || passwordMismatch">
-          {{ loading ? 'Creating Account...' : 'Create Account' }}
-          <svg *ngIf="!loading" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
+        <button type="submit" class="btn-submit" [disabled]="loading" id="register-submit-btn">
+          {{ loading ? 'CREATING ACCOUNT...' : 'SIGN UP' }}
         </button>
       </form>
+    </div>
+
+    <!-- Right Panel: Gradient with Welcome Message -->
+    <div class="panel-left panel-left-register">
+      <div class="panel-left-bg"></div>
+      <div class="panel-left-content">
+        <div class="brand-logo">
+          <span class="logo-edu">Edu</span><span class="logo-stack">Stack</span>
+        </div>
+        <h1 class="panel-title">Hello,<br>Friend!</h1>
+        <p class="panel-description">
+          Enter your personal details to start your learning journey with us.
+        </p>
+        <div class="panel-divider"></div>
+        <p class="panel-switch-text">Already have an account?</p>
+        <a routerLink="/auth/login" class="btn-outline" id="go-to-signin">
+          SIGN IN
+        </a>
+      </div>
     </div>
   </div>
 </div>

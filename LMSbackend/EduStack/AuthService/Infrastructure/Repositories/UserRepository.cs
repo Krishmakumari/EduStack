@@ -1,4 +1,4 @@
-﻿using AuthService.Application.Interfaces;
+using AuthService.Application.Interfaces;
 using AuthService.Domain.Entities;
 using AuthService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +24,9 @@ public class UserRepository : IUserRepository
         => await _context.Users
             .Include(u => u.RefreshTokens)
             .FirstOrDefaultAsync(u => u.UserId == userId);
+
+    public async Task<IEnumerable<User>> GetAllAsync()
+        => await _context.Users.AsNoTracking().ToListAsync();
 
     public async Task AddAsync(User user)
         => await _context.Users.AddAsync(user);

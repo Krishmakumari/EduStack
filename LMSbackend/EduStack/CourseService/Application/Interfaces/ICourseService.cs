@@ -15,7 +15,7 @@ public interface ICourseService
     Task<CourseResponse> CreateCourseAsync(Guid instructorId, string instructorName, CreateCourseRequest request);
     Task<CourseResponse> UpdateCourseAsync(Guid instructorId, Guid courseId, UpdateCourseRequest request);
     Task DeleteCourseAsync(Guid instructorId, Guid courseId);
-    Task PublishCourseAsync(Guid instructorId, Guid courseId);
+    Task SubmitCourseForReviewAsync(Guid instructorId, Guid courseId);
     Task UnpublishCourseAsync(Guid instructorId, Guid courseId);
 
     Task<SectionResponse> AddSectionAsync(Guid instructorId, Guid courseId, AddSectionRequest request);
@@ -25,4 +25,23 @@ public interface ICourseService
     Task<LessonResponse> AddLessonAsync(Guid instructorId, Guid sectionId, AddLessonRequest request);
     Task<LessonResponse> UpdateLessonAsync(Guid instructorId, Guid lessonId, UpdateLessonRequest request);
     Task DeleteLessonAsync(Guid instructorId, Guid lessonId);
+
+    // Admin methods — no ownership check.
+    Task<IEnumerable<CourseResponse>> GetAllCoursesAdminAsync();
+    Task AdminDeleteCourseAsync(Guid courseId);
+    Task ApproveCourseAsync(Guid courseId);
+    Task RejectCourseAsync(Guid courseId);
+
+    // Category Management
+    Task<IEnumerable<CategoryResponse>> GetAllCategoriesAsync();
+    Task<CategoryResponse> CreateCategoryAsync(string name, string? description);
+    Task UpdateCategoryAsync(Guid id, string name, string? description);
+    Task DeleteCategoryAsync(Guid id);
+}
+
+public class CategoryResponse
+{
+    public Guid CategoryId { get; set; }
+    public string Name { get; set; } = default!;
+    public string? Description { get; set; }
 }

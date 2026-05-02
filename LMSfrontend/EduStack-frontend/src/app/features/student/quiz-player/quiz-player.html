@@ -111,6 +111,32 @@
           </div>
         </div>
 
+        <!-- Detailed Breakdown -->
+        <div class="details-section mt-8">
+          <h3 class="details-title mb-4">Detailed Breakdown</h3>
+          <div class="details-list">
+            <div class="detail-item glass-panel p-4 mb-3" *ngFor="let detail of result.details; let i = index" [class.wrong]="!detail.isCorrect">
+              <div class="detail-header mb-2" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="detail-q-num font-bold">Question {{ i + 1 }}</span>
+                <span class="detail-status p-1 rounded text-sm" [class.bg-success-subtle]="detail.isCorrect" [class.text-success]="detail.isCorrect" [class.bg-danger-subtle]="!detail.isCorrect" [class.text-danger]="!detail.isCorrect">
+                  {{ detail.isCorrect ? '✓ Correct' : '✗ Incorrect' }}
+                </span>
+              </div>
+              <p class="detail-q-text mb-3">{{ detail.questionText }}</p>
+              <div class="detail-answers" style="display: grid; gap: 0.5rem; font-size: 0.9rem;">
+                <div class="ans-box">
+                  <span class="ans-label opacity-70">Your Answer: </span>
+                  <span class="ans-val font-semibold">{{ detail.selectedAnswer }}</span>
+                </div>
+                <div class="ans-box" *ngIf="!detail.isCorrect">
+                  <span class="ans-label opacity-70">Correct Answer: </span>
+                  <span class="ans-val font-semibold text-success">{{ detail.correctAnswer }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="action-section mt-8 text-center" style="display: flex; gap: 1rem; justify-content: center;">
           <button *ngIf="result.passed" 
                   class="btn-primary" 

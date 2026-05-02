@@ -14,6 +14,59 @@
 .manage-title { font-size: 1.6rem; font-weight: 700; margin: 0; }
 .manage-sub { color: var(--text-secondary); font-size: 0.9rem; margin: 0.2rem 0 0; }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.course-status-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.course-status-badge.published {
+  background: rgba(0, 229, 181, 0.1);
+  border-color: rgba(0, 229, 181, 0.3);
+  color: var(--primary);
+}
+
+.course-status-badge.pendingapproval {
+  background: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.3);
+  color: #eab308;
+}
+
+.course-status-badge.rejected {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+.btn-publish {
+  padding: 0.6rem 1.1rem;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-publish:hover {
+  background: var(--primary);
+  color: #000;
+}
+
 .btn-add {
   display: inline-flex; align-items: center; gap: 0.4rem;
   padding: 0.6rem 1.1rem; border: none; border-radius: 8px;

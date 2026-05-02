@@ -1,0 +1,283 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-icon">A</div>
+      <h2>Admin Panel</h2>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        Dashboard
+      </button>
+      <button [class.active]="activeTab === 'users'" (click)="setTab('users')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Users
+      </button>
+      <button [class.active]="activeTab === 'courses'" (click)="setTab('courses')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        Courses
+      </button>
+      <button [class.active]="activeTab === 'payments'" (click)="setTab('payments')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        Payments
+      </button>
+      <button [class.active]="activeTab === 'enrollments'" (click)="setTab('enrollments')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+        Enrollments
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="revenue-card">
+        <span>Total Revenue</span>
+        <h3>{{ getTotalRevenue() | currency }}</h3>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="content-header">
+      <div>
+        <h1>{{ activeTab === 'overview' ? 'Platform Overview' : (activeTab | titlecase) + ' Management' }}</h1>
+        <p class="header-subtitle" *ngIf="activeTab === 'overview'">Real-time metrics and system health.</p>
+      </div>
+      <button class="refresh-btn" (click)="loadAllData()" [disabled]="loading">
+        <span *ngIf="!loading">Refresh Data</span>
+        <span *ngIf="loading">Updating...</span>
+      </button>
+    </header>
+
+    <!-- Overview Tab -->
+    <div class="overview-grid" *ngIf="activeTab === 'overview'">
+      <div class="stat-card">
+        <div class="stat-icon users-bg">👥</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Users</span>
+          <h2 class="stat-value">{{ users.length }}</h2>
+          <div class="stat-detail">
+            <span class="text-instructor">{{ getInstructorCount() }} Instructors</span>
+            <span class="text-student">{{ getStudentCount() }} Students</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon courses-bg">📚</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Courses</span>
+          <h2 class="stat-value">{{ courses.length }}</h2>
+          <div class="stat-detail">
+            <span class="text-warning">{{ getPendingCoursesCount() }} Pending Review</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon revenue-bg">💰</div>
+        <div class="stat-info">
+          <span class="stat-label">Platform Revenue</span>
+          <h2 class="stat-value">{{ getTotalRevenue() | currency }}</h2>
+          <div class="stat-detail">
+            <span>{{ payments.length }} Transactions</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon enroll-bg">🎓</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Enrollments</span>
+          <h2 class="stat-value">{{ enrollments.length }}</h2>
+          <div class="stat-detail">
+            <span>Active Learners</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity / Moderation Queue in Overview -->
+    <div class="overview-sections" *ngIf="activeTab === 'overview'">
+      <div class="dashboard-section shadow-sm">
+        <div class="section-header-inline">
+          <h3>Moderation Queue</h3>
+          <span class="badge badge-warning" *ngIf="getPendingCoursesCount() > 0">{{ getPendingCoursesCount() }} Pending</span>
+        </div>
+        <div class="empty-state" *ngIf="getPendingCoursesCount() === 0">
+          <p>No courses currently awaiting review.</p>
+        </div>
+        <table *ngIf="getPendingCoursesCount() > 0">
+          <thead>
+            <tr>
+              <th>Course Title</th>
+              <th>Instructor</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let course of courses | slice:0:10">
+              <ng-container *ngIf="course.status === 'PendingApproval'">
+                <td class="font-bold">{{ course.title }}</td>
+                <td>{{ course.instructorName }}</td>
+                <td>{{ course.createdAt | date:'shortDate' }}</td>
+                <td class="btn-group-sm">
+                  <button class="btn-approve" (click)="approveCourse(course.courseId)">Approve</button>
+                  <button class="btn-reject" (click)="rejectCourse(course.courseId)">Reject</button>
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-container shadow-sm" *ngIf="activeTab === 'users'">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>
+              <div class="user-info">
+                <span class="user-avatar">{{ user.fullName[0] }}</span>
+                {{ user.fullName }}
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <select [(ngModel)]="user.role" (change)="changeRole(user, user.role)" class="role-select">
+                <option value="Student">Student</option>
+                <option value="Instructor">Instructor</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </td>
+            <td>
+              <span class="badge" [class.badge-danger]="user.isBanned" [class.badge-success]="!user.isBanned">
+                {{ user.isBanned ? 'Banned' : 'Active' }}
+              </span>
+            </td>
+            <td>{{ user.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <button class="btn-action" (click)="toggleBan(user)" [class.btn-unban]="user.isBanned">
+                {{ user.isBanned ? 'Unban' : 'Ban' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Courses Table -->
+    <div class="table-container shadow-sm" *ngIf="activeTab === 'courses'">
+      <table>
+        <thead>
+          <tr>
+            <th>Course Title</th>
+            <th>Instructor</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let course of courses">
+            <td class="font-bold">{{ course.title }}</td>
+            <td>{{ course.instructorName }}</td>
+            <td>{{ course.price | currency }}</td>
+            <td>
+              <span class="badge" 
+                [class.badge-primary]="course.status === 'Published'" 
+                [class.badge-warning]="course.status === 'PendingApproval'"
+                [class.badge-danger]="course.status === 'Rejected'"
+                [class.badge-secondary]="course.status === 'Draft'">
+                {{ course.status }}
+              </span>
+            </td>
+            <td>{{ course.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <button class="btn-delete" (click)="deleteCourse(course.courseId)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Payments Table -->
+    <div class="table-container shadow-sm" *ngIf="activeTab === 'payments'">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Method</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payment of payments">
+            <td>{{ payment.studentName }}</td>
+            <td>{{ payment.courseTitle }}</td>
+            <td class="font-bold">{{ payment.amount | currency }}</td>
+            <td>
+              <span class="badge" 
+                [class.badge-success]="payment.status === 'Completed'"
+                [class.badge-warning]="payment.status === 'Pending'"
+                [class.badge-danger]="payment.status === 'Failed' || payment.status === 'Refunded'">
+                {{ payment.status }}
+              </span>
+            </td>
+            <td>{{ payment.method }}</td>
+            <td>{{ payment.createdAt | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Enrollments Table -->
+    <div class="table-container shadow-sm" *ngIf="activeTab === 'enrollments'">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Status</th>
+            <th>Enrolled At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let enrollment of enrollments">
+            <td>{{ enrollment.studentName }}</td>
+            <td>{{ enrollment.courseTitle }}</td>
+            <td>
+              <span class="badge badge-primary">{{ enrollment.status }}</span>
+            </td>
+            <td>{{ enrollment.enrolledAt | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

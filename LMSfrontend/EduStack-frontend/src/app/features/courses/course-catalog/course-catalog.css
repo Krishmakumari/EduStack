@@ -183,6 +183,25 @@
   color: var(--text-secondary);
 }
 
+.card-enrolled-badge {
+  position: absolute;
+  bottom: 0.8rem;
+  right: 0.8rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(0, 229, 181, 0.2);
+  color: var(--primary);
+  backdrop-filter: blur(8px);
+}
+
+.card-price-enrolled {
+  font-size: 0.95rem;
+  color: var(--primary);
+}
+
 /* Card Body */
 .card-body {
   padding: 1.2rem 1.4rem 1.4rem;

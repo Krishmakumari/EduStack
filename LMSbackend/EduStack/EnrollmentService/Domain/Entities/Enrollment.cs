@@ -15,9 +15,10 @@ public class Enrollment
     public Guid StudentId { get; private set; }        // from JWT "sub" claim
     public string StudentName { get; private set; } = default!; // denormalized from JWT
 
-    public Guid CourseId { get; private set; }         // from Course Service
-    public string CourseTitle { get; private set; } = default!; // denormalized from request
+    public Guid CourseId { get; set; }         // from Course Service
+    public string CourseTitle { get; set; } = default!; // denormalized from request
 
+    public int TotalLessons { get; private set; }      // captured at enrollment time
     public decimal PricePaid { get; private set; }     // amount paid at time of enrollment
 
     // Status lifecycle: Active → Completed (when all lessons done) OR Cancelled.
@@ -43,6 +44,7 @@ public class Enrollment
         string studentName,
         Guid courseId,
         string courseTitle,
+        int totalLessons,
         decimal pricePaid)
     {
         return new Enrollment
@@ -52,6 +54,7 @@ public class Enrollment
             StudentName = studentName,
             CourseId = courseId,
             CourseTitle = courseTitle,
+            TotalLessons = totalLessons,
             PricePaid = pricePaid,
             Status = EnrollmentStatus.Active,  // always starts Active
             EnrolledAt = DateTime.UtcNow       // captured at creation time
@@ -64,6 +67,14 @@ public class Enrollment
     {
         Status = EnrollmentStatus.Completed;
         CompletedAt = DateTime.UtcNow;
+    }
+
+    public void SyncTotalLessons(int totalLessons)
+    {
+        if (totalLessons > 0)
+        {
+            TotalLessons = totalLessons;
+        }
     }
 
     // Cancel — transitions enrollment to Cancelled state (e.g. refund/withdrawal).

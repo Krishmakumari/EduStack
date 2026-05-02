@@ -11,6 +11,7 @@ public class EnrollmentDetailResponse
     public string StudentName { get; set; } = default!;
     public Guid CourseId { get; set; }
     public string CourseTitle { get; set; } = default!;
+    public int TotalLessons { get; set; }
     public decimal PricePaid { get; set; }
     public string Status { get; set; } = default!;
     public DateTime EnrolledAt { get; set; }

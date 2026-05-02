@@ -53,6 +53,7 @@ public class EnrollmentService : IEnrollmentService
             studentName,       // denormalized from JWT — no Auth Service call needed
             request.CourseId,
             request.CourseTitle, // denormalized from request — no Course Service call needed
+            request.TotalLessons,
             request.PricePaid);  // amount paid at time of enrollment (for history)
 
         await _enrollmentRepo.AddAsync(enrollment);
@@ -173,6 +174,24 @@ public class EnrollmentService : IEnrollmentService
         return enrollment != null;
     }
 
+    public async Task<IEnumerable<EnrollmentResponse>> GetAllEnrollmentsAsync()
+    {
+        var enrollments = await _enrollmentRepo.GetAllAsync();
+        return enrollments.Select(MapToEnrollmentResponse);
+    }
+
+    public async Task SyncTotalLessonsAsync(Guid studentId, Guid enrollmentId, int totalLessons)
+    {
+        var enrollment = await _enrollmentRepo.GetByIdAsync(enrollmentId)
+            ?? throw new EnrollmentNotFoundException();
+
+        if (enrollment.StudentId != studentId)
+            throw new UnauthorizedEnrollmentAccessException();
+
+        enrollment.SyncTotalLessons(totalLessons);
+        await _enrollmentRepo.SaveChangesAsync();
+    }
+
     // ─── Mapping Helpers ──────────────────────────────────────────────────────
     // Manual mapping instead of AutoMapper — simpler, faster, easier to debug.
     // Enum Status is converted to string for JSON-friendly API responses.
@@ -185,6 +204,7 @@ public class EnrollmentService : IEnrollmentService
         StudentName = e.StudentName,
         CourseId = e.CourseId,
         CourseTitle = e.CourseTitle,
+        TotalLessons = e.TotalLessons,
         PricePaid = e.PricePaid,
         Status = e.Status.ToString(),   // enum → string for JSON
         EnrolledAt = e.EnrolledAt,
@@ -199,6 +219,7 @@ public class EnrollmentService : IEnrollmentService
         StudentName = e.StudentName,
         CourseId = e.CourseId,
         CourseTitle = e.CourseTitle,
+        TotalLessons = e.TotalLessons,
         PricePaid = e.PricePaid,
         Status = e.Status.ToString(),
         EnrolledAt = e.EnrolledAt,
@@ -216,7 +237,7 @@ public class EnrollmentService : IEnrollmentService
     // Progress stats response — calculates % complete in memory.
     private static ProgressResponse MapToProgressResponse(Enrollment e)
     {
-        var total = e.LessonProgresses.Count;
+        var total = e.TotalLessons;
         var completed = e.LessonProgresses.Count(p => p.IsCompleted);
 
         // Guard against division by zero — returns 0% if no lessons are tracked yet.

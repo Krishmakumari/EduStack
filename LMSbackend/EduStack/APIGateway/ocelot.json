@@ -10,6 +10,24 @@
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5124 } ]
     },
     {
+      "RouteId": "admin-users-root",
+      "SwaggerKey": "auth",
+      "UpstreamPathTemplate": "/gateway/admin/users",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/admin/users",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5124 } ]
+    },
+    {
+      "RouteId": "admin-users-service",
+      "SwaggerKey": "auth",
+      "UpstreamPathTemplate": "/gateway/admin/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/admin/users/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5124 } ]
+    },
+    {
       "RouteId": "courses-root",
       "SwaggerKey": "courses",
       "UpstreamPathTemplate": "/gateway/courses",
@@ -19,11 +37,46 @@
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
     },
     {
+      "RouteId": "media-upload-endpoint",
+      "UpstreamPathTemplate": "/gateway/media/upload",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/media/upload",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ],
+      "Priority": 10
+    },
+    {
       "RouteId": "courses-service",
       "SwaggerKey": "courses",
       "UpstreamPathTemplate": "/gateway/courses/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/api/courses/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
+    },
+    {
+      "RouteId": "courses-uploads",
+      "UpstreamPathTemplate": "/uploads/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/uploads/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
+    },
+    {
+      "RouteId": "admin-courses-root",
+      "SwaggerKey": "courses",
+      "UpstreamPathTemplate": "/gateway/admin/courses",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/admin/courses",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
+    },
+    {
+      "RouteId": "admin-courses-service",
+      "SwaggerKey": "courses",
+      "UpstreamPathTemplate": "/gateway/admin/courses/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/admin/courses/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5248 } ]
     },
@@ -42,6 +95,24 @@
       "UpstreamPathTemplate": "/gateway/enrollments/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/api/enrollments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5249 } ]
+    },
+    {
+      "RouteId": "admin-enrollments-root",
+      "SwaggerKey": "enrollments",
+      "UpstreamPathTemplate": "/gateway/admin/enrollments",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/admin/enrollments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5249 } ]
+    },
+    {
+      "RouteId": "admin-enrollments-service",
+      "SwaggerKey": "enrollments",
+      "UpstreamPathTemplate": "/gateway/admin/enrollments/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/api/admin/enrollments/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5249 } ]
     },
@@ -76,8 +147,17 @@
       "RouteId": "admin-payments-service",
       "SwaggerKey": "payments",
       "UpstreamPathTemplate": "/gateway/admin/payments/{everything}",
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/api/admin/payments/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5117 } ]
+    },
+    {
+      "RouteId": "admin-payments-root",
+      "SwaggerKey": "payments",
+      "UpstreamPathTemplate": "/gateway/admin/payments",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/admin/payments",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5117 } ]
     },

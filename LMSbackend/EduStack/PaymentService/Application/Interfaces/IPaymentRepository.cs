@@ -21,6 +21,9 @@ public interface IPaymentRepository
     // Returns null = no existing payment. Returns record = check its Status.
     Task<Payment?> GetByStudentAndCourseAsync(Guid studentId, Guid courseId);
 
+    // Get all payments across the system.
+    Task<IEnumerable<Payment>> GetAllAsync();
+
     Task AddAsync(Payment payment);
     Task SaveChangesAsync();
 }

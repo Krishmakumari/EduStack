@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { timeout, retry } from 'rxjs/operators';
 import { CourseService, CreateCourseRequest } from '../../../services/course.service';
@@ -9,31 +9,60 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-course-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './course-form.html',
   styleUrl: './course-form.css',
 })
 export class CourseForm implements OnInit {
+  courseForm: FormGroup;
   isEditMode = false;
   courseId = '';
   loading = false;
   pageLoading = true;
   errorMessage = '';
-
-  title = '';
-  description = '';
-  thumbnailUrl = '';
-  price = 0;
-  level = 'Beginner';
-  language = 'English';
+  submitted = false;
 
   constructor(
+    private fb: FormBuilder,
     private courseService: CourseService,
     private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.courseForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      description: ['', [Validators.required, Validators.minLength(20), Validators.maxLength(2000)]],
+      thumbnailUrl: ['', [Validators.required]],
+      price: [0, [Validators.required, Validators.min(0), Validators.max(50000)]],
+      level: ['Beginner', [Validators.required]],
+      language: ['English', [Validators.required, Validators.minLength(2)]],
+    });
+  }
+
+  get f() { return this.courseForm.controls; }
+
+  // Expose thumbnail URL for preview
+  get thumbnailUrl(): string { return this.courseForm.value.thumbnailUrl; }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.loading = true;
+      this.courseService.uploadThumbnail(file).subscribe({
+        next: (res) => {
+          this.courseForm.patchValue({ thumbnailUrl: res.url });
+          this.loading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorMessage = 'Failed to upload image. Please try again.';
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
 
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id') || '';
@@ -47,12 +76,14 @@ export class CourseForm implements OnInit {
         )
         .subscribe({
           next: (course) => {
-            this.title = course.title;
-            this.description = course.description;
-            this.thumbnailUrl = course.thumbnailUrl;
-            this.price = course.price;
-            this.level = course.level;
-            this.language = course.language;
+            this.courseForm.patchValue({
+              title: course.title,
+              description: course.description,
+              thumbnailUrl: course.thumbnailUrl,
+              price: course.price,
+              level: course.level,
+              language: course.language,
+            });
             this.pageLoading = false;
             this.cdr.detectChanges(); // force UI update
           },
@@ -71,17 +102,14 @@ export class CourseForm implements OnInit {
   }
 
   onSubmit() {
+    this.submitted = true;
     this.errorMessage = '';
+
+    if (this.courseForm.invalid) return;
+
     this.loading = true;
 
-    const data: CreateCourseRequest = {
-      title: this.title,
-      description: this.description,
-      thumbnailUrl: this.thumbnailUrl,
-      price: this.price,
-      level: this.level,
-      language: this.language,
-    };
+    const data: CreateCourseRequest = this.courseForm.value;
 
     const obs$ = this.isEditMode
       ? this.courseService.updateCourse(this.courseId, data)

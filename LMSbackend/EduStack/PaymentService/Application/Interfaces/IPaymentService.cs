@@ -29,4 +29,7 @@ public interface IPaymentService
 
     // Get all payments for a course (Admin/Instructor dashboard — no ownership check).
     Task<IEnumerable<PaymentResponse>> GetPaymentsByCourseAsync(Guid courseId);
+
+    // Get all payments across the system (Admin only).
+    Task<IEnumerable<PaymentResponse>> GetAllPaymentsAsync();
 }

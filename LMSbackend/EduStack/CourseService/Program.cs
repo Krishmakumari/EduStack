@@ -28,6 +28,7 @@ builder.Services.AddDbContext<CourseDbContext>(options =>
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ISectionRepository, SectionRepository>();
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // ─── Services ──────────────────────────────────────────────────────────────
 // Single service handles all course/section/lesson business logic.
@@ -139,6 +140,7 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseCors("AllowAll");
+app.UseStaticFiles();
 app.UseAuthentication();   // must come BEFORE Authorization
 app.UseAuthorization();
 app.MapControllers();

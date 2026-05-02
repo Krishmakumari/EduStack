@@ -9,6 +9,7 @@ using CourseService.Application.Interfaces;
 using CourseService.Domain.Entities;
 using CourseService.Domain.Enums;
 using CourseService.Domain.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CourseService.Application.Services;
 
@@ -21,15 +22,18 @@ public class CourseService : ICourseService
     private readonly ICourseRepository _courseRepo;
     private readonly ISectionRepository _sectionRepo;
     private readonly ILessonRepository _lessonRepo;
+    private readonly ICategoryRepository _categoryRepo;
 
     public CourseService(
         ICourseRepository courseRepo,
         ISectionRepository sectionRepo,
-        ILessonRepository lessonRepo)
+        ILessonRepository lessonRepo,
+        ICategoryRepository categoryRepo)
     {
         _courseRepo = courseRepo;
         _sectionRepo = sectionRepo;
         _lessonRepo = lessonRepo;
+        _categoryRepo = categoryRepo;
     }
 
     // ─── Get All Courses ──────────────────────────────────────────────────────
@@ -150,22 +154,48 @@ public class CourseService : ICourseService
         await _courseRepo.SaveChangesAsync();
     }
 
-    // ─── Publish Course ───────────────────────────────────────────────────────
-    // Makes the course visible and enrollable to students.
-    // BUSINESS RULE: Course must have at least one section to be published.
-    // That's why we use GetByIdWithSectionsAsync (need Sections loaded for the check).
-    public async Task PublishCourseAsync(Guid instructorId, Guid courseId)
+    public async Task AdminDeleteCourseAsync(Guid courseId)
     {
-        // Must load WITH sections because Publish() checks Sections.Any().
+        var course = await _courseRepo.GetByIdAsync(courseId)
+            ?? throw new CourseNotFoundException();
+
+        await _courseRepo.DeleteAsync(course);
+        await _courseRepo.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<CourseResponse>> GetAllCoursesAdminAsync()
+    {
+        var courses = await _courseRepo.GetAllAsync();
+        return courses.Select(MapToCourseResponse);
+    }
+
+    public async Task SubmitCourseForReviewAsync(Guid instructorId, Guid courseId)
+    {
         var course = await _courseRepo.GetByIdWithSectionsAsync(courseId)
             ?? throw new CourseNotFoundException();
 
         if (course.InstructorId != instructorId)
             throw new UnauthorizedAccessException();
 
-        // course.Publish() throws DomainException if no sections exist.
-        // Prevents instructors from publishing empty course shells.
-        course.Publish();
+        course.SubmitForReview();
+        await _courseRepo.SaveChangesAsync();
+    }
+
+    public async Task ApproveCourseAsync(Guid courseId)
+    {
+        var course = await _courseRepo.GetByIdAsync(courseId)
+            ?? throw new CourseNotFoundException();
+
+        course.Approve();
+        await _courseRepo.SaveChangesAsync();
+    }
+
+    public async Task RejectCourseAsync(Guid courseId)
+    {
+        var course = await _courseRepo.GetByIdAsync(courseId)
+            ?? throw new CourseNotFoundException();
+
+        course.Reject();
         await _courseRepo.SaveChangesAsync();
     }
 
@@ -408,4 +438,49 @@ public class CourseService : ICourseService
         Order = lesson.Order,
         IsFreePreview = lesson.IsFreePreview
     };
+
+    // ─── Category Management ──────────────────────────────────────────────────
+
+    public async Task<IEnumerable<CategoryResponse>> GetAllCategoriesAsync()
+    {
+        var categories = await _categoryRepo.GetAllAsync();
+        return categories.Select(c => new CategoryResponse
+        {
+            CategoryId = c.CategoryId,
+            Name = c.Name,
+            Description = c.Description
+        });
+    }
+
+    public async Task<CategoryResponse> CreateCategoryAsync(string name, string? description)
+    {
+        var category = new Category(name, description);
+        await _categoryRepo.AddAsync(category);
+        await _categoryRepo.SaveChangesAsync();
+
+        return new CategoryResponse
+        {
+            CategoryId = category.CategoryId,
+            Name = category.Name,
+            Description = category.Description
+        };
+    }
+
+    public async Task UpdateCategoryAsync(Guid id, string name, string? description)
+    {
+        var category = await _categoryRepo.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Category not found.");
+
+        category.Update(name, description);
+        await _categoryRepo.SaveChangesAsync();
+    }
+
+    public async Task DeleteCategoryAsync(Guid id)
+    {
+        var category = await _categoryRepo.GetByIdAsync(id)
+            ?? throw new KeyNotFoundException("Category not found.");
+
+        _categoryRepo.Delete(category);
+        await _categoryRepo.SaveChangesAsync();
+    }
 }

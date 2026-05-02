@@ -162,31 +162,57 @@ public class QuizService : IQuizService
         if (attempt.Status != AttemptStatus.InProgress)
             throw new QuizSubmissionException("Quiz attempt is already completed.");
 
-        var questions = attempt.Quiz.Questions;
+        // Load questions directly from the DB to ensure we have the most accurate and unique set.
+        var uniqueQuestions = await _context.Questions
+            .Where(q => q.QuizId == attempt.QuizId)
+            .ToListAsync();
+
+        int totalQuestions = uniqueQuestions.Count;
         int correctCount = 0;
+        var processedQuestionIds = new HashSet<Guid>();
         
+        Console.WriteLine($"[QuizService] Grading Attempt {attemptId} for Quiz {attempt.QuizId}. Total Questions in DB: {totalQuestions}");
+        Console.WriteLine($"[QuizService] Received {dto.Answers.Count} answers from student.");
+
         foreach (var answerDto in dto.Answers)
         {
-            var question = questions.FirstOrDefault(q => q.QuestionId == answerDto.QuestionId)
-                ?? throw new QuestionNotFoundException(answerDto.QuestionId);
+            if (processedQuestionIds.Contains(answerDto.QuestionId)) continue;
+            processedQuestionIds.Add(answerDto.QuestionId);
 
-            // Resilient matching: ignoring case and trimming accidental whitespace.
-            bool isCorrect = string.Equals(question.CorrectAnswer.Trim(), answerDto.SelectedAnswer.Trim(), StringComparison.OrdinalIgnoreCase);
+            var question = uniqueQuestions.FirstOrDefault(q => q.QuestionId == answerDto.QuestionId);
+            if (question == null)
+            {
+                Console.WriteLine($"[QuizService] WARNING: Student submitted answer for question {answerDto.QuestionId} which is NOT in this quiz!");
+                continue;
+            }
+
+            string expected = question.CorrectAnswer?.Trim() ?? string.Empty;
+            string actual = answerDto.SelectedAnswer?.Trim() ?? string.Empty;
+            bool isCorrect = string.Equals(expected, actual, StringComparison.OrdinalIgnoreCase);
             
-            if (isCorrect) correctCount++;
+            if (isCorrect) 
+            {
+                correctCount++;
+            }
+            else 
+            {
+                Console.WriteLine($"[QuizService] Question {question.QuestionId} WRONG. Expected: '{expected}', Actual: '{actual}'");
+            }
 
             _context.UserAnswers.Add(new UserAnswer
             {
                 AnswerId = Guid.NewGuid(),
                 AttemptId = attemptId,
                 QuestionId = question.QuestionId,
-                SelectedAnswer = answerDto.SelectedAnswer,
+                SelectedAnswer = answerDto.SelectedAnswer ?? string.Empty,
                 IsCorrect = isCorrect
             });
         }
 
-        // Calculate score out of 100
-        attempt.Score = questions.Count == 0 ? 0 : (correctCount * 100m) / questions.Count;
+        // Calculate score out of 100 based on the count of questions available in the DB.
+        attempt.Score = totalQuestions == 0 ? 0 : (correctCount * 100m) / totalQuestions;
+        
+        Console.WriteLine($"[QuizService] Final Result: {correctCount}/{totalQuestions} correct. Score: {attempt.Score}%");
         
         // Finalize Attempt
         attempt.Status = attempt.Score >= attempt.Quiz.PassingScore 
@@ -199,7 +225,7 @@ public class QuizService : IQuizService
         await _context.SaveChangesAsync();
         Console.WriteLine($"[QuizService] Submission completed for attempt {attemptId}.");
 
-        // 🔥 Publish "QuizResultEvent" to RabbitMQ.
+        // Publish "QuizResultEvent" to RabbitMQ.
         // NotificationService will pick this up and send an email.
         await _publisher.PublishAsync("quiz_queue", new QuizResultEvent
         {
@@ -208,13 +234,32 @@ public class QuizService : IQuizService
             Passed = attempt.Status == AttemptStatus.Passed
         });
 
+        var details = new List<QuestionResultDto>();
+        foreach (var q in uniqueQuestions)
+        {
+            var answer = _context.UserAnswers.Local
+                .FirstOrDefault(ua => ua.AttemptId == attemptId && ua.QuestionId == q.QuestionId)
+                ?? _context.UserAnswers
+                .FirstOrDefault(ua => ua.AttemptId == attemptId && ua.QuestionId == q.QuestionId);
+
+            details.Add(new QuestionResultDto
+            {
+                QuestionId = q.QuestionId,
+                QuestionText = q.Text,
+                SelectedAnswer = answer?.SelectedAnswer ?? "Not Answered",
+                CorrectAnswer = q.CorrectAnswer,
+                IsCorrect = answer?.IsCorrect ?? false
+            });
+        }
+
         return new QuizResultDto
         {
             AttemptId = attempt.AttemptId,
             Score = attempt.Score,
             Passed = attempt.Status == AttemptStatus.Passed,
             CorrectAnswers = correctCount,
-            TotalQuestions = questions.Count
+            TotalQuestions = totalQuestions,
+            Details = details
         };
     }
 }

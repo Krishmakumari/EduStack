@@ -34,9 +34,37 @@
       </div>
       <div class="card-body">
         <h3 class="card-title">{{ enroll.courseTitle }}</h3>
+
+        <!-- Progress Section -->
+        <div class="progress-section" *ngIf="getProgress(enroll.enrollmentId) as progress">
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" [style.width.%]="progress.progressPercentage"></div>
+          </div>
+          <div class="progress-stats">
+            <span class="progress-percentage">{{ progress.progressPercentage }}% complete</span>
+            <span class="progress-lessons">{{ progress.completedLessons }}/{{ progress.totalLessons }} lessons</span>
+          </div>
+          <div class="progress-remaining" *ngIf="progress.totalLessons - progress.completedLessons > 0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
+            {{ progress.totalLessons - progress.completedLessons }} lessons remaining
+          </div>
+          <div class="progress-remaining progress-complete" *ngIf="progress.totalLessons - progress.completedLessons === 0 && progress.totalLessons > 0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            All lessons completed!
+          </div>
+        </div>
+
+        <!-- Loading Progress -->
+        <div class="progress-loading" *ngIf="!getProgress(enroll.enrollmentId)">
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill progress-bar-loading"></div>
+          </div>
+          <span class="progress-loading-text">Loading progress...</span>
+        </div>
+
         <div class="card-footer">
           <span class="btn-continue">
-            Continue Learning
+            {{ enroll.status === 'Completed' ? 'Review Course' : 'Continue Learning' }}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </span>
         </div>
@@ -44,3 +72,5 @@
     </a>
   </div>
 </div>
+
+<app-footer></app-footer>

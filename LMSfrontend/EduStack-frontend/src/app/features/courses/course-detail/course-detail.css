@@ -25,8 +25,10 @@
 .detail-page { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; padding-top: 80px; }
 .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; margin-bottom: 1.5rem; transition: color 0.2s; }
 .back-link:hover { color: var(--primary); }
-.hero-content { display: flex; gap: 2.5rem; align-items: flex-start; }
-.hero-info { flex: 1; }
+.hero-content { display: flex; gap: 2.5rem; align-items: stretch; }
+.hero-thumbnail { flex-shrink: 0; width: 400px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.hero-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+.hero-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 .hero-badges { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.3rem 0.7rem; border-radius: 6px; }
 .level-beginner { background: rgba(34,197,94,0.15); color: #4ade80; }
@@ -46,6 +48,19 @@
 .btn-enroll { width: 100%; padding: 0.9rem; border: none; border-radius: 10px; background: var(--primary); color: #000; font-family: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.25s; box-shadow: 0 8px 20px -8px var(--primary); }
 .btn-enroll:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--primary); }
 .price-features { margin-top: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); text-align: left; }
+
+/* Enrolled state */
+.enrolled-tag { color: var(--primary) !important; }
+.btn-enrolled {
+  background: transparent !important;
+  border: 2px solid var(--primary) !important;
+  color: var(--primary) !important;
+  box-shadow: none !important;
+}
+.btn-enrolled:hover {
+  background: rgba(0, 229, 181, 0.08) !important;
+  transform: translateY(-2px);
+}
 
 /* Curriculum */
 .curriculum { margin-top: 3rem; }

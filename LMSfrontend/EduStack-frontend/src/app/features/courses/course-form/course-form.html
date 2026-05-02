@@ -10,25 +10,46 @@
 
   <div class="form-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <form class="course-form" (ngSubmit)="onSubmit()">
+  <form class="course-form" [formGroup]="courseForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label class="form-label">Course Title</label>
-      <input type="text" [(ngModel)]="title" name="title" placeholder="e.g. Angular for Beginners" required />
+      <input type="text" formControlName="title" placeholder="e.g. Angular for Beginners"
+        [class.input-invalid]="submitted && f['title'].errors" />
+      <div class="form-field-error" *ngIf="submitted && f['title'].errors">
+        <span *ngIf="f['title'].errors['required']">Course title is required</span>
+        <span *ngIf="f['title'].errors['minlength']">Title must be at least 3 characters</span>
+        <span *ngIf="f['title'].errors['maxlength']">Title cannot exceed 100 characters</span>
+      </div>
     </div>
 
     <div class="form-group">
       <label class="form-label">Description</label>
-      <textarea [(ngModel)]="description" name="description" rows="4" placeholder="What will students learn in this course?" required></textarea>
+      <textarea formControlName="description" rows="4" placeholder="What will students learn in this course?"
+        [class.input-invalid]="submitted && f['description'].errors"></textarea>
+      <div class="char-count" *ngIf="f['description'].dirty">
+        {{ courseForm.value.description?.length || 0 }} / 2000
+      </div>
+      <div class="form-field-error" *ngIf="submitted && f['description'].errors">
+        <span *ngIf="f['description'].errors['required']">Description is required</span>
+        <span *ngIf="f['description'].errors['minlength']">Description must be at least 20 characters</span>
+        <span *ngIf="f['description'].errors['maxlength']">Description cannot exceed 2000 characters</span>
+      </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Price (₹)</label>
-        <input type="number" [(ngModel)]="price" name="price" min="0" step="1" placeholder="0 for free" required />
+        <input type="number" formControlName="price" min="0" step="1" placeholder="0 for free"
+          [class.input-invalid]="submitted && f['price'].errors" />
+        <div class="form-field-error" *ngIf="submitted && f['price'].errors">
+          <span *ngIf="f['price'].errors['required']">Price is required</span>
+          <span *ngIf="f['price'].errors['min']">Price cannot be negative</span>
+          <span *ngIf="f['price'].errors['max']">Price cannot exceed ₹50,000</span>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Level</label>
-        <select [(ngModel)]="level" name="level" required>
+        <select formControlName="level">
           <option value="Beginner">Beginner</option>
           <option value="Intermediate">Intermediate</option>
           <option value="Advanced">Advanced</option>
@@ -36,17 +57,35 @@
       </div>
       <div class="form-group">
         <label class="form-label">Language</label>
-        <input type="text" [(ngModel)]="language" name="language" placeholder="English" required />
+        <input type="text" formControlName="language" placeholder="English"
+          [class.input-invalid]="submitted && f['language'].errors" />
+        <div class="form-field-error" *ngIf="submitted && f['language'].errors">
+          <span *ngIf="f['language'].errors['required']">Language is required</span>
+          <span *ngIf="f['language'].errors['minlength']">Language must be at least 2 characters</span>
+        </div>
       </div>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Thumbnail URL</label>
-      <input type="url" [(ngModel)]="thumbnailUrl" name="thumbnailUrl" placeholder="https://example.com/image.jpg" required />
+      <label class="form-label">Thumbnail Image</label>
+      <div class="upload-container">
+        <input type="text" formControlName="thumbnailUrl" placeholder="https://example.com/image.jpg"
+          [class.input-invalid]="submitted && f['thumbnailUrl'].errors" />
+        
+        <label class="btn-upload" for="file-upload">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Upload
+        </label>
+        <input id="file-upload" type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;" />
+      </div>
+
+      <div class="form-field-error" *ngIf="submitted && f['thumbnailUrl'].errors">
+        <span *ngIf="f['thumbnailUrl'].errors['required']">Thumbnail is required</span>
+      </div>
     </div>
 
-    <div class="thumb-preview" *ngIf="thumbnailUrl">
-      <img [src]="thumbnailUrl" alt="Thumbnail preview" />
+    <div class="thumb-preview" *ngIf="courseForm.get('thumbnailUrl')?.value && !f['thumbnailUrl'].errors">
+      <img [src]="courseForm.get('thumbnailUrl')?.value" alt="Thumbnail preview" />
     </div>
 
     <button type="submit" class="btn-submit" [disabled]="loading">
