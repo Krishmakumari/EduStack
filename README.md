@@ -17,16 +17,14 @@ Architecture, Domain-Driven Design, and all backend/frontend best practices.
 - [Services](#services)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
 - [API Endpoints Summary](#api-endpoints-summary)
 - [Design Patterns Used](#design-patterns-used)
 - [Security](#security)
 - [Messaging — RabbitMQ](#messaging--rabbitmq)
 - [Frontend — Angular 17](#frontend--angular-17)
 - [Testing](#testing)
-- [Best Practices Implemented](#best-practices-implemented)
-- [Good-to-Have Features](#good-to-have-features)
-- [Author](#author)
+
+
 
 ---
 
@@ -313,4 +311,22 @@ Student requests certificate → QuestPDF generates PDF → saved to disk + DB
 | `instructorGuard` | `role == 'Instructor'` OR `'Admin'` | `/admin/dashboard` (if Admin) |
 | `adminGuard` | `role == 'Admin'` | `/` (home) |
 
+
+## Testing
+
+```bash
+# Run all NUnit tests (from any service root)
+dotnet test
+
+# Run with code coverage report
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+### Test Coverage Areas
+
+- Service layer unit tests with mocked repositories
+- Controller integration tests
+- Domain entity method tests (state machine guards, factory methods)
+- Repository tests using in-memory EF Core provider
+- Duplicate prevention and ownership validation tests
 
